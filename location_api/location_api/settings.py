@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-41f3wux^1o1j(!t-^i91*rb49ie@kr4m*&qvqo@)96y_j%-a=j'
+SECRET_KEY = 'django-insecure-@i=)q2rc@=qd@a6w01o*teo_otopmsimd8628$8+7a*#n=+8*-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,16 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'my_api',
+     'my_api',
     'rest_framework',
     'corsheaders',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
-        
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -87,7 +86,7 @@ WSGI_APPLICATION = 'location_api.wsgi.application'
 DATABASES = {
         'default': {
              'ENGINE': 'django.db.backends.mysql', # mysql database python driver.
-             'NAME': 'location_api_test1',    # mysql database name.
+             'NAME': 'location_api_test5',    # mysql database name.
              'USER': 'root',   # db login user name.
              'PASSWORD': 'pass123456', # db login user password.
              'HOST': '', # db machine ip or domain, if left empty then the value is localhost.
@@ -116,8 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'

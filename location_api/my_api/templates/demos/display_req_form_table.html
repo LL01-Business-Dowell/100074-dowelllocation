@@ -1,0 +1,291 @@
+{% extends 'bases/base1.html' %}
+{% load static %}
+
+{% block title %}
+Local Countries{% endblock %}
+{% block addcss %}
+<!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> -->
+<!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script> -->
+<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+<!------ Include the above in your HEAD tag ---------->
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<style>
+    .select2-container .select2-selection--single{
+    height:34px !important;
+}
+.select2-container--default .select2-selection--single{
+         border: 1px solid #ccc !important; 
+     border-radius: 0px !important; 
+}
+
+</style>
+{% endblock addcss %}
+  {% block content %}
+
+    <!-- Section: inner-header -->
+    <section class="inner-header divider layer-overlay overlay-theme-colored-7" data-bg-img="http://placehold.it/1920x820">
+      <div class="container pt-10 pb-10">
+        <!-- Section Content -->
+        <div class="section-content">
+          <div class="row"> 
+            <div class="col-md-6">
+              <h2 class="text-theme-colored2 font-36">Query Requests and Responses</h2>
+              <ol class="breadcrumb text-left mt-10 white">
+                <!-- <li><a href="#">Book</a></li> -->
+                <li><a href="#"> </a></li>
+                <li class="active">###</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Schedule -->
+    <section>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6 col-md-push-3">
+              <div class="border-1px p-25">
+                <h4 class="text-theme-colored text-uppercase m-0">Query Request Table</h4>
+
+                <div class="line-bottom mb-30"></div>
+                <form id="query_form" name="appointment_form" class="mt-30" method="post" action="includes/appointment.php">
+                  {% csrf_token %}
+                  <div class="row">
+                    <div class="col-sm-12">
+                        <!-- <div class="form-group">
+                            <select class="form-control">
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                              <option>5</option>
+                            </select>
+                          </div> -->
+                      <div class="form-group mb-10">
+                        <label>Project Code</label>
+                        <input id ="projectCode" name="project_code_name" class="form-control" type="text" required="" placeholder="Enter Project Code" aria-required="true">
+                      </div>
+                    </div>
+                    <div class="col-sm-12">
+                      <div class="form-group mb-10">
+                        <label>Username</label>
+                        <input id ="userName" name="username" class="form-control required email" type="email" placeholder="Enter Username" aria-required="true">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="radio mt-20">
+                    <label class="radio-inline">
+                      <input class="allInd" type="radio" name="all_ind" id="inlineRadio1"  value="all">
+                      All </label>
+                    <label class="radio-inline">
+                      <input class = "allInd" type="radio" name="all_ind" id="inlineRadio2" value="individual">
+                      Choose </label>
+                   
+                  </div>
+                 
+
+                  <div class="form-group">
+                    <label>Time Zone of Choice</label>
+                    <select name = "time_z" class="form-control select2" multiple>
+                       <option>Select</option> 
+                       {% for r in time_zones %}
+                       <option value="{{r.id}}">{{r.utc_attained}}<p> </p><p>-</p><p> </p>
+                      
+                        {{r.country_attained}}<p> </p><p>(</p>
+                        {{r.city_attained}}<p>)</p></option> 
+                       {% endfor %}
+                    </select>
+                </div>
+                  <div class="form-group mb-0 mt-20">
+                    <input name="form_botcheck" class="form-control" type="hidden" value="">
+                    <button type="submit" id="submitReqQuery" class="btn btn-dark btn-theme-colored" data-loading-text="Please wait...">Submit</button>
+                  </div>
+                  
+                </form>
+                <!-- Appointment Form Validation-->
+                <script type="text/javascript">
+                  // $("#appointment_form").validate({
+                  $('input[name="appointment_form"]').validate({
+                    submitHandler: function(form) {
+                      var form_btn = $(form).find('button[type="submit"]');
+                      var form_result_div = '#form-result';
+                      $(form_result_div).remove();
+                      form_btn.before('<div id="form-result" class="alert alert-success" role="alert" style="display: none;"></div>');
+                      var form_btn_old_msg = form_btn.html();
+                      form_btn.html(form_btn.prop('disabled', true).data("loading-text"));
+                      $(form).ajaxSubmit({
+                        dataType:  'json',
+                        success: function(data) {
+                          if( data.status == 'true' ) {
+                            $(form).find('.form-control').val('');
+                          }
+                          form_btn.prop('disabled', false).html(form_btn_old_msg);
+                          $(form_result_div).html(data.message).fadeIn('slow');
+                          setTimeout(function(){ $(form_result_div).fadeOut('slow') }, 6000);
+                        }
+                      });
+                    }
+                  });
+                </script>
+                <script>
+                    $('.select2').select2();
+                </script>
+                <script>
+                  // allOrInd = document.getElementById("myRadio").value = "newRadioBtnValue";
+                  // let allOrInd= document.querySelector('input[name="inlineRadioOptions"]:checked').value;
+                  // console.log("allOrInd");
+                  // console.log(allOrInd);
+
+                </script>
+                <script>
+                </script>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12" id="tableDiv">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    {% endblock content %}
+
+  <!-- end main-content -->
+
+<!-- Footer Scripts -->
+<!-- JS | Custom script for all pages -->
+{% block additionalscript %}
+<script type="text/javascript" src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="{% static 'js/custom.js' %}"></script>
+<script>
+
+
+
+  $(function(){
+// DRUG CATEGORY CRUD
+//Category data submission
+$('input[type="radio"]').on('click change', function(e) {
+    let tempGrp = e.target.value;
+    console.log("tempgrp"+tempGrp);
+    if (tempGrp =="all" ){
+      $( "#projectCode" ).prop( "disabled", true );
+      $( "#userName" ).prop( "disabled", true );
+      
+
+    }
+    // if (tempGrp =="individual"){
+
+    // }
+});
+  // Create Table
+  function createTable(data,  table_headings){
+    let table = $("<table/>").addClass("table table-striped table-schedule mt-30");
+  table.attr('id', "reqResList");
+  let tableHead = $("<thead/>");
+  let tableBody= $("<tbody/>");
+  let tableFooter= $("<tfoot/>");
+  let headingRow  =  $("<tr/>").addClass("bg-theme-colored");
+//   class="bg-theme-colored"
+  let footerRow  =  $("<tr/>");
+
+  $.each(table_headings, function( index, value ) {
+    
+    temphead = $("<th/>")
+    tempfoot = $("<th/>")
+//   alert( index + ": " + value );
+  headingRow.append(temphead.text(value));
+  footerRow.append(tempfoot.text(value));
+
+
+});
+tableHead.append(headingRow);
+tableFooter.append(footerRow)
+
+  $.each(data, function( index, value ) {
+    tempRow = $("<tr/>")
+    // row.append($("<td/>").text());
+//   alert( index + ": " + value );
+  $.each(table_headings, function(colIndex, c) { 
+            // row.append($("<t"+(rowIndex == 0 ?  "h" : "d")+"/>").text(c));
+            tempRow.append($("<td/>").text(value[c]));
+        });
+    tableBody.append(tempRow);
+});
+table.append(tableHead);
+table.append(tableBody);
+table.append(tableFooter);
+$("#tableDiv").append(table)
+  }
+  function makeDataTable(){
+
+      // Setup - add a text input to each footer cell
+
+  $('#reqResList tfoot th').each(function () {
+        var title = $(this).text();
+        $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+    });
+ let reqResListTable = $('#reqResList').DataTable( {
+        fixedHeader: true,
+        "scrollX": true,
+        initComplete: function () {
+            // Apply the search
+            this.api()
+                .columns()
+                .every(function () {
+                    var that = this;
+ 
+                    $('input', this.footer()).on('keyup change clear', function () {
+                        if (that.search() !== this.value) {
+                            that.search(this.value).draw();
+                        }
+                    });
+                });
+        },
+    } );
+  }
+                
+    $("#submitReqQuery").click(function(e){
+        e.preventDefault();
+        query_data = $('#query_form').serialize();
+        $.ajax({
+            type: "POST",
+            url:"/display-req-resp/",
+            data:query_data,
+            beforeSend:function(){
+                //  alert("beforeSend");
+                alert(query_data);
+
+            },
+            cache: false,
+            dataType: "json",
+            success: function(data){
+                // alert(new_drug_category_data);
+                if (data.status === "ok"){
+                    $("#my_alert_box").append("<div class='alert alert-success alert-dismissable'><button aria-hidden='true' data-dismiss='alert' class='close' type='button'> × </button>Drug Category Successfuly saved. </div></div>");
+                    createTable(data.records, data.table_headings);
+                    makeDataTable();
+                }
+                if (data.status === "error"){
+                    $("#my_alert_box").append("<div class='alert alert-danger alert-dismissable'><button aria-hidden='true' data-dismiss='alert' class='close' type='button'> × </button> Error! Please check your data again </div></div>");
+
+                }
+                
+            }
+        });
+        return false
+    });
+  });
+          
+
+</script>
+{% endblock %}
+
