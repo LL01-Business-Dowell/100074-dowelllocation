@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-41f3wux^1o1j(!t-^i91*rb49ie@kr4m*&qvqo@)96y_j%-a=j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['100074.pythonanywhere.com','127.0.0.1']
 
 
 # Application definition
@@ -43,7 +43,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-        
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -85,13 +85,14 @@ WSGI_APPLICATION = 'location_api.wsgi.application'
 #     }
 # }
 DATABASES = {
-        'default': {
+
+          'default': {
              'ENGINE': 'django.db.backends.mysql', # mysql database python driver.
-             'NAME': 'location_api_test1',    # mysql database name.
-             'USER': 'root',   # db login user name.
-             'PASSWORD': 'pass123456', # db login user password.
-             'HOST': '', # db machine ip or domain, if left empty then the value is localhost.
-             'PORT': '3306', # db server listening port number
+             'NAME': '100074$location_api_test1',    # mysql database name.
+             'USER': '100074',   # db login user name.
+             'PASSWORD': 'dowell@msql#db', # db login user password.
+             'HOST': '100074.mysql.pythonanywhere-services.com', # db machine ip or domain, if left empty then the value is localhost.
+            #  'PORT': '3306', # db server listening port number
          }
 }
 
@@ -130,7 +131,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+# STATIC_URL = 'static/'
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
