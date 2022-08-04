@@ -87,7 +87,7 @@ DATABASES = {
 
           'default': {
              'ENGINE': 'django.db.backends.mysql', # mysql database python driver.
-             'NAME': '100074$location_api_test1',    # mysql database name.
+             'NAME': '100074$location_api_test2',    # mysql database name.
              'USER': '100074',   # db login user name.
              'PASSWORD': 'dowell@msql#db', # db login user password.
              'HOST': '100074.mysql.pythonanywhere-services.com', # db machine ip or domain, if left empty then the value is localhost.

@@ -1,6 +1,6 @@
 import collections
-from itertools import combinations_with_replacement
-from msilib.schema import Error
+# from itertools import combinations_with_replacement
+# from msilib.schema import Error
 from time import monotonic, time
 from django.shortcuts import render, redirect
 from my_api.models import Countries, Regions, SubRegions, Continent, RequestsRec, TimeZoneDb
@@ -69,7 +69,7 @@ def get_event_id():
             "objectcode": "1", "instancecode": "100074", "context": "Access  ",
             "document_id": "3004", "rules": "some rules", "status": "work"
             }
-    
+
 
     r = requests.post(url, json=data)
     print("Event Response ")
@@ -191,7 +191,7 @@ def mongo_read(key_namer, field_val):
 
 
 
-    
+
 def eventId_rectifier():
     continents = Continent.objects.all()
     countries = Countries.objects.all()
@@ -259,7 +259,7 @@ class ContinentList(APIView):
     def get(self, request, format=None, **kwargs):
         status_dict = dict()
         # countries = Countries.objects.all()
-        # serializer = CountrySerializer(countries, many=True)        
+        # serializer = CountrySerializer(countries, many=True)
         # status_dict["isSuccess"]=False
         # countries/<slug:username>/<slug:sessionId>/<slug:projectCode>/
         req_dict = {}
@@ -321,7 +321,7 @@ class CountryList(APIView):
     def get(self, request, format=None, **kwargs):
         status_dict = dict()
         # countries = Countries.objects.all()
-        # serializer = CountrySerializer(countries, many=True)        
+        # serializer = CountrySerializer(countries, many=True)
         # status_dict["isSuccess"]=False
         # countries/<slug:username>/<slug:sessionId>/<slug:projectCode>/
         req_dict = {}
@@ -511,7 +511,7 @@ class RegionDetail(APIView):
                 country = Countries.objects.filter(country_code=kwargs['query_value'])
             if short_f:
                 country = Countries.objects.filter(country_short=kwargs['query_value'])
-            
+
             return Regions.objects.filter(country__in=country)
 
             # if pk_f:
@@ -520,10 +520,10 @@ class RegionDetail(APIView):
 
 
 
-        try:         
+        try:
             # country = Countries.objects.get(name=kwargs['pk'])
             return Regions.objects.filter(country=country)
-        
+
 
             # return Countries.objects.get(pk=pk)
         except Regions.DoesNotExist:
@@ -535,11 +535,11 @@ class RegionDetail(APIView):
         status_dict = dict()
         # countries = Countries.objects.all()
         # serializer = CountrySerializer(countries, many=True)
-        
+
         # status_dict["isSuccess"]=False
         # countries = Countries.objects.all()
         # serializer = CountrySerializer(countries, many=True)
-        
+
         # status_dict["isSuccess"]=False
         # countries/<slug:username>/<slug:sessionId>/<slug:projectCode>/
         req_dict = {}
@@ -557,7 +557,7 @@ class RegionDetail(APIView):
         # status_dict['username'] = kwargs['username']
         # status_dict['session_id'] = kwargs['sessionId']
         # status_dict['project-code'] = kwargs['projectCode']
-        
+
 
 
         status_dict['url'] = "region/query_type/query_value/username/sessionId/projectCode/"
@@ -694,7 +694,7 @@ class TargetFuntion(View):
 
     headers = {'content-type': 'application/json'}
 
-    
+
     def get(self, request, *args, **kwargs):
         checker = {'region': False, 'country': False, 'continent':False}
         database = self.database
@@ -748,11 +748,11 @@ class TargetFuntion(View):
                             t['ID'] = t['_id']
                             t['section'] = collection
                             response_list.append(t)
-                            
+
                             print(t['ID'])
                             print(t['section'])
                 return render(request,'demos/mongo_countries.html',{'records':response_list, 'name':name})
-                
+
 
             if checker["region"]:
                 print("Region in process")
@@ -825,7 +825,7 @@ def date_balancer(db_time):
     print(dt)
     current_tz = str(dt)[-6:]
     print("current tz = "+current_tz)
-   
+
     ##Get hrs difference of timezone as dff_hrs and know if plus or minus
     sn = current_tz[0]
     time_hr = current_tz[1:3]
@@ -840,7 +840,7 @@ def date_balancer(db_time):
         print(int(time_min))
         adjusted_date = db_time + timedelta(hours=int(time_hr))
         adjusted_date = adjusted_date + timedelta(minutes=int(time_min))
-        
+
         # adjusted_date = ts + datetime.timedelta(seconds=1)
 
     else:
@@ -872,7 +872,7 @@ def record_re(kwargs):
     "session_id":kwargs['session_id'],
     "isSuccess":kwargs["isSuccess"],
      "isError":kwargs["isError"],
-    'project-code': kwargs['project-code'] ,              
+    'project-code': kwargs['project-code'] ,
     "date_time_rec":abdijan_time_string,
     "time_z":'Africa/Abidjan'
         }
@@ -891,7 +891,7 @@ def record_re(kwargs):
         print("Request has an error : "+str(result["error"]))
         return False
     print("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
-    
+
     # return True
 def sync_func(request):
     print("Ebent Id")
@@ -911,7 +911,7 @@ def sync_func(request):
     print(date_time_obj)
     print("us date: "+str(us_date))
     print("kenya date: "+str(kenya_date))
-    
+
     date_time_cleaner(False, str(us_date))
     paris_tz = zoneinfo.ZoneInfo("Europe/Paris")
     kenya_tz = zoneinfo.ZoneInfo('Africa/Nairobi')
@@ -932,7 +932,7 @@ def sync_func(request):
     "session_id":"292920","date_time_rec":abdijan_time_string, "eventId":event_id, "timeZone":'Africa/Abidjan'
     }
     result = mongo_create("req_resp_messages",data )
-    
+
     if result["isSuccess"]:
         print("Request:  --> insert Id: "+str(result["inserted_id"]))
         reqrec = RequestsRec(req="Insert",url_req=url, response="Looks good",username="Programmer",
@@ -955,7 +955,7 @@ def sync_func(request):
     abdinjan_time_conv = date_balancer(db_time_obj)
     print("abdijand time")
     print(abdinjan_time_conv)
-    
+
     kenyan_time_conv= abdinjan_time_conv.astimezone(kenya_tz)
     print("kenyan time")
     print(kenyan_time_conv)
@@ -964,7 +964,7 @@ def sync_func(request):
 
 
 
-    
+
 
     # print(date_time_obj)
 
@@ -977,11 +977,11 @@ def sync_func(request):
      "kenya date":kenya_date,
       "us date":us_date,
      "indian date":india_date}
-    return JsonResponse(response_data) 
+    return JsonResponse(response_data)
 def handle_sync(action):
     ##Continents
     #Local
-    
+
     local_contis = Continent.objects.all()
     local_contis_list = list()
     for c in local_contis:
@@ -1080,12 +1080,12 @@ def handle_sync(action):
                     status_dict["isError"]=True
                     status_dict["continents"]="Not Successful"
                     status_dict['response'] = "local continent update NOT successful"
-                
-                
+
+
                 status_dict['url'] = "local"
                 status_dict['username'] = "frontend-programmer"
                 status_dict['session_id'] = "devopmentId"
-                status_dict['project-code'] = "100074"                
+                status_dict['project-code'] = "100074"
                 record_re(status_dict)
 
     #             "req":kwargs['req'],
@@ -1115,7 +1115,7 @@ def handle_sync(action):
             if k['_id'] in update_countries_ids:
                 print("kkkkk countries")
                 print(k)
-                req_dict = {"request":"sync-update", "payload":{"name":k['name'], "event_id":k['eventId'], 
+                req_dict = {"request":"sync-update", "payload":{"name":k['name'], "event_id":k['eventId'],
                 "mongo_id": k['_id']},
                 "country_code":k['code'],
                 "country_short":k['short'],
@@ -1141,13 +1141,13 @@ def handle_sync(action):
                     status_dict["isError"]=True
                     status_dict["regions"]="Not Successful"
                     status_dict['response'] = "local country update NOT successful"
-                
 
-                
+
+
                 status_dict['url'] = "local"
                 status_dict['username'] = "frontend-programmer"
                 status_dict['session_id'] = "devopmentId"
-                status_dict['project-code'] = "100074"                
+                status_dict['project-code'] = "100074"
                 record_re(status_dict)
         #Cities
         update_regions_ids = list()
@@ -1174,7 +1174,7 @@ def handle_sync(action):
                 req_dict["request"]="sync-update"
                 payload = {}
                 payload["name"]=k['name']
-                payload["event_id"]=k['eventId'] 
+                payload["event_id"]=k['eventId']
                 payload["mongo_id"]= k['_id']
                 if "country"in k:
                     payload["country"]=k['country']
@@ -1198,7 +1198,7 @@ def handle_sync(action):
                     k['city_area'] ="City Area"
                     payload["city_area"]=k['city_area']
                 req_dict["payload"]=str(payload)
-                # req_dict = {"request":"sync-update", "payload":{"name":k['name'], "event_id":k['eventId'], 
+                # req_dict = {"request":"sync-update", "payload":{"name":k['name'], "event_id":k['eventId'],
                 # "mongo_id": k['_id']},
                 # "country":k['country'],
                 # "lat_lon":k['lat_lon'],
@@ -1217,7 +1217,7 @@ def handle_sync(action):
                     status_dict['response'] = "local country update successful"
 
                     print("Country for region above name "+str(continent.name))
-                    
+
                 except:
                     print("Continent Not found")
                     print("Errors hhhh", sys.exc_info())
@@ -1231,12 +1231,12 @@ def handle_sync(action):
                 # region = Regions(country= country,name=k['name'],lat_lon=k['lat_lon'],city_code=k['city_code'],
                 # city_area= k['city_area'],mongo_id=k['_id'],event_id=k['eventId'])
                 # region.save()
-                
-                
+
+
                 status_dict['url'] = "local"
                 status_dict['username'] = "frontend-programmer"
                 status_dict['session_id'] = "devopmentId"
-                status_dict['project-code'] = "100074"                
+                status_dict['project-code'] = "100074"
                 record_re(status_dict)
 
     response_data = {'error': False, 'success':True,'status': "ok", "length_local_contis_set":str(len(local_contis_set)),
@@ -1253,10 +1253,10 @@ def handle_sync(action):
     return response_data
 class SyncFunc(View):
     template_name = 'demos/sync_recs.html'
-    
+
     def get(self, request, *args, **kwargs):
-        
-        
+
+
 
         response_data = handle_sync("display")
 
@@ -1265,13 +1265,13 @@ class SyncFunc(View):
     def post(self, request, *args, **kwargs):
         response_data = handle_sync("update")
         pass
-  
 
 
 
 
 
-        
+
+
 
         # return render(request, 'demos/log_in_func.html')
 def target_func(request):
@@ -1353,7 +1353,7 @@ def target_func(request):
     #     for t in i:
     #         print("t: "+str(t))
 
-        
+
     print("Normall data o")
     print(respons_j['normal']['data'][0])
     for i in respons_j['normal']['data'][0]:
@@ -1366,7 +1366,7 @@ def log_in_func(request):
 class LoInFunc(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'demos/log_in_func.html')
-    def post(self, request, *args, **kwargs):   
+    def post(self, request, *args, **kwargs):
         loc = request.POST.get("loc", False)
         os = request.POST.get("os", False)
         brow = request.POST.get("brow", False)
@@ -1396,7 +1396,7 @@ class LoInFunc(View):
         userurl="http://100014.pythonanywhere.com/api/user/"
         payload = {"otp": otp, "loc": loc, "dev": dev,
             "os": os, "brow": brow,"time":time,
-            "ip": ip, "conn": conn,"username":username, 
+            "ip": ip, "conn": conn,"username":username,
             "password": password
             }
 
@@ -1422,7 +1422,7 @@ class DisplayReqResp(View):
 
 
         return render(request, 'demos/display_req_form_table.html',{"time_zones":time_zones})
-    def post(self, request, *args, **kwargs):   
+    def post(self, request, *args, **kwargs):
         all_ind = request.POST.get("all_ind", False)
         # time_z_selected = request.POST.get("time_z", False)
         time_z_selected_list = request.POST.getlist('time_z')
@@ -1437,11 +1437,11 @@ class DisplayReqResp(View):
             print(country_tz)
             time_z_list.append(temp_tz.timezone_attained)
             table_headings.append(temp_tz.timezone_attained)
-        
+
         print("all_ind"+str(all_ind))
         print("time_z_selected"+str(time_z_selected_list))
         if all_ind=="all":
-            
+
             recs = RequestsRec.objects.all()
             recs_list=list()
             for r in recs:
@@ -1481,17 +1481,17 @@ class DisplayReqResp(View):
 class CreateFunc(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'demos/create_locs.html')
-    def post(self, request, *args, **kwargs):   
-        ##Get name of DB 
+    def post(self, request, *args, **kwargs):
+        ##Get name of DB
         ##Check if exust in mongo if not then create
         ##Check if exist in local if not create but id exists update mongo_id and event_id
 
         pass
 
 # Four collections
-# COntinent 
+# COntinent
 # Country
-# Region 
+# Region
 # Town
 
 
@@ -1500,7 +1500,7 @@ class CreateFunc(View):
 #  "collection": "TemplateReports",
 #  "document": "templatereports",
 #  "team_member_ID": "22689044433",
-#  "function_ID": "100018", 
+#  "function_ID": "100018",
 
 
 #  "cluster": "Documents",

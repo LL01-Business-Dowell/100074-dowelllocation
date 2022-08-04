@@ -6,30 +6,36 @@ class Continent(models.Model):
     name = models.CharField(max_length=300)
     mongo_id = models.CharField(max_length=300, default="CONTINENTMONGOID")
     event_id = models.CharField(max_length=300, default="EVENTMONGOID")
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.name
+    @classmethod
+    def get_default_pk(cls):
+        continent, created = cls.objects.get_or_create(
+            name='default continent')# defaults=dict(description='this is not an exam'))
+        return continent.pk
+
 
     class Meta:
         ordering = ['name']
 class Countries(models.Model):
-    continent = models.ForeignKey(Continent, on_delete=models.CASCADE)
+    continent = models.ForeignKey(Continent, on_delete=models.CASCADE, default=Continent.get_default_pk)
     name = models.CharField(max_length=300)
     country_code = models.CharField(max_length=5,default="000")
     country_short = models.CharField(max_length=6, default="IIII")
     mongo_id = models.CharField(max_length=300, default="COUNTRYMONGOID")
     event_id = models.CharField(max_length=300, default="EVENTMONGOID")
-    
+
 
     def __str__(self):
         return self.name
 
     class Meta:
         ordering = ['name']
-    
+
 class Regions(models.Model):
     country = models.ForeignKey(Countries, on_delete=models.CASCADE)
     name =  models.CharField(max_length=300)
-    lat_lon = models.CharField(max_length=600)
+    lat_lon = models.CharField(max_length=600,  default="DefaultName")
     city_code = models.CharField(max_length=25, default="CITY")
     city_area = models.CharField(max_length=25, default="000")
     mongo_id = models.CharField(max_length=300, default="REGIONMONGOID")
