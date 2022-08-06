@@ -1,0 +1,117 @@
+{% extends 'bases/base2.html' %}
+{% load static %}
+
+{% block title %}
+How To Use{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="title">How to Query</h5>
+          <p class="category">Have fun!!!</p>
+        </div>
+        <div class="card-body">
+            <div class="typography-line">
+                <h4>Definitions </h4>
+                <h6><query-type></h6><p>Type of querying factor</p>
+                <h6><query-value></h6><p>Value according to query-type eg India, PAK, KEN, 234</p>
+                <p> Examples
+                    <ul>
+                        <li><strong>name : </strong>Query by country name or city name (India, Kenya, Pakistan, Nigeria etc) or (Mumbai, Nairobi, Cape Town etc) </li>
+                        <li><strong>code : </strong>Query by country code or city code (91, 254, 92, 234 etc) or (MUM, NBO, CPT etc) </li>
+                        <li><strong>short : </strong>Query by country short (IND, KEN, PAK, NGA etc) </li>
+                    </ul>
+                </p>
+                <h6>username</h6><p>Username of user using the software or type of programmer using the api.</p>
+                <h6>session-id</h6><p>Session Id from Login Fucntion</p>
+                <h6>project-code</h6><p>Project code eg 100074, 100018, 100025</p>
+            </div>
+            <div class="typography-line">
+            <h4>Continents</h4>
+            <h6>Get all Continents</h6>
+
+                <p><span>Continents</span>
+                  To get all continents
+
+                </p>
+                
+                    
+                    <!--code Tag starts here -->
+                            <code>
+                                'https://100074.pythonanywhere.com/continents/username/session-id/project-code/'
+                                eg.
+                                'https://100074.pythonanywhere.com/continents/johnDoe123/haikalsb1234/100074/'
+
+                    <!--code Tag ends here -->
+                            </code>
+                         
+              </div>
+              <div class="typography-line">
+                <h4>Countries</h4>
+                <h6>Get all Countries</h6>
+    
+                    <p><span>Countries</span>
+                      To get all countries
+    
+                    </p>
+                    
+                        
+                        <!--code Tag starts here -->
+                                <code>
+                                    'https://100074.pythonanywhere.com/countries/username/session-id/project-code/'
+                                    
+                                    'https://100074.pythonanywhere.com/countries/johnDoe123/haikalsb1234/100074/'
+    
+                        <!--code Tag ends here -->
+                                </code>
+                <hr/>
+                <h6>Get Single Country</h6>
+    
+                    <p>
+                      To get one country
+    
+                    </p>
+                    
+                        
+                        <!--code Tag starts here -->
+                                <code>
+                                    'https://100074.pythonanywhere.com/country/query-type/query-value/username/session-id/project-code/'
+                                    eg.
+                                    'https://100074.pythonanywhere.com/country/name/India/johnDoe123/haikalsb1234/100074/'
+                                    'https://100074.pythonanywhere.com/country/code/91/johnDoe123/haikalsb1234/100074/'
+                                    'https://100074.pythonanywhere.com/country/short/IND/johnDoe123/haikalsb1234/100074/'
+                        <!--code Tag ends here -->
+                                </code>
+                             
+                  </div>
+                  <div class="typography-line">
+                    <h4>Regions</h4>
+                    <h6>Get all Regions</h6>
+        
+                        <p><span>Regions</span>
+                          To get all regions from a country
+        
+                        </p>
+                        
+                            
+                             <!--code Tag starts here -->
+                             <code>
+                                'https://100074.pythonanywhere.com/region/query-type/query-value/username/session-id/project-code/'
+                                eg.
+                                'https://100074.pythonanywhere.com/region/name/India/johnDoe123/haikalsb1234/100074/'
+                                'https://100074.pythonanywhere.com/region/code/91/johnDoe123/haikalsb1234/100074/'
+                                'https://100074.pythonanywhere.com/region/short/IND/johnDoe123/haikalsb1234/100074/'
+                    <!--code Tag ends here -->
+                            </code>
+                                 
+                      </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+{% block additionalscript %}
+{% endblock %}
