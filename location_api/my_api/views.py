@@ -1,6 +1,6 @@
 import collections
 from itertools import combinations_with_replacement
-from msilib.schema import Error
+# from msilib.schema import Error
 from time import monotonic, time
 from django.shortcuts import render, redirect
 from my_api.models import Countries, Regions, SubRegions, Continent, RequestsRec, TimeZoneDb
@@ -24,6 +24,21 @@ import requests
 import pprint
 # Create your views here.
 BASE_DIR = Path(__file__).resolve().parent.parent
+def home(request):
+    # session = request.GET.get("session_id", None)
+    # if session:
+    #     user = get_user_profile(session)
+    #     if user is None:
+    #         return redirect("https://100014.pythonanywhere.com/")
+    #     else:
+    #         print(user)
+    #         response_data = {'error': True, 'status': "not ok","user":user}
+    #         return JsonResponse(response_data)
+    # else:
+    #     return redirect("https://100014.pythonanywhere.com/")
+    return render(request, 'api/home.html')
+def api(request):
+    return render(request, 'api/api.html')
 def rec_tz(request):
     wanted_tz = pd.read_csv(BASE_DIR / 'utcDf.csv')
     column_d = ["UTC", "time_zone","country","city"]
@@ -41,21 +56,7 @@ def rec_tz(request):
 
     response_data = {'error': True, 'status': "not ok"}
     return JsonResponse(response_data)
-def home(request):
-    session = request.GET.get("session_id", None)
-    if session:
-        user = get_user_profile(session)
 
-        if user is None:
-            return redirect("https://100014.pythonanywhere.com/")
-        else:
-            print(user)
-            response_data = {'error': True, 'status': "not ok","user":user}
-            return JsonResponse(response_data)
-
-
-    else:
-        return redirect("https://100014.pythonanywhere.com/")
 
 def get_event_id():
     dd = datetime.now()
