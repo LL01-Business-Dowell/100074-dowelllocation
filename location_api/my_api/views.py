@@ -1096,47 +1096,48 @@ def handle_sync(action):
         #Countries
         update_countries_ids = list()
         for i in mongo_countries_difference_set:
-            print("i")
-            print(i)
+            # print("i")
+            # print(i)
             p = i.find("-")
-            print(p)
-            print(i[:p])
+            # print(p)
+            # print(i[:p])
             name = i[:p]
-            print("------>>>>>>")
+            # print("------>>>>>>")
             cont_id = i[(p+1):]
-            print(i[(p+1):])
+            # print(i[(p+1):])
             update_countries_ids.append(cont_id)
-        print("uopdate_ids")
-        print(update_conts_ids)
+            print("Continent Not found")
+        # print("uopdate_ids")
+        # print(update_conts_ids)
         for k in mongo_countries:
             status_dict = dict()
 
-            print("k['_id' countrys] "+str(k['_id']))
+            # print("k['_id' countrys] "+str(k['_id']))
             if k['_id'] in update_countries_ids:
-                print("kkkkk countries")
+                # print("kkkkk countries")
                 print(k)
                 req_dict = {"request":"sync-update", "payload":{"name":k['name'], "event_id":k['eventId'],
                 "mongo_id": k['_id']},
-                "country_code":k['code'],
-                "country_short":k['short'],
+                "country_code":k['country_code'],
+                "country_short":k['country_short'],
                 "continent":k['continent'],
                 }
                 status_dict['req'] = str(req_dict)
                 try:
                     continent = Continent.objects.get(mongo_id=k['continent'])
-                    print("Continent for countrry above name "+str(continent.name))
-                    country = Countries(continent= continent,name=k['name'],country_code=k['code'],
-                country_short=k['short'],mongo_id=k['_id'],event_id=k['eventId'])
+                    # print("Continent for countrry above name "+str(continent.name))
+                    country = Countries(continent= continent,name=k['name'],country_code=k['country_code'],
+                country_short=k['country_short'],mongo_id=k['_id'],event_id=k['eventId'])
                     country.save()
                     status_dict["isSuccess"]=True
                     status_dict["isError"]=False
                     status_dict["regions"]="Successful"
                     status_dict['response'] = "local country update successful"
                 except:
-                    print("Continent Not found")
-                    print("Errors gggggg", sys.exc_info())
-                    print(Exception)
-                    print("Errors", sys.exc_info()[0])
+                    # print("Continent Not found")
+                    # print("Errors gggggg", sys.exc_info())
+                    # print(Exception)
+                    # print("Errors", sys.exc_info()[0])
                     status_dict["isSuccess"]=False
                     status_dict["isError"]=True
                     status_dict["regions"]="Not Successful"
@@ -1152,24 +1153,24 @@ def handle_sync(action):
         #Cities
         update_regions_ids = list()
         for i in mongo_regions_difference_set:
-            print("i")
-            print(i)
+            # print("i")
+            # print(i)
             p = i.find("-")
-            print(p)
-            print(i[:p])
+            # print(p)
+            # print(i[:p])
             name = i[:p]
-            print("------>>>>>>")
+            # print("------>>>>>>")
             cont_id = i[(p+1):]
-            print(i[(p+1):])
+            # print(i[(p+1):])
             update_regions_ids.append(cont_id)
-        print("uopdate_ids")
-        print(update_conts_ids)
+        # print("uopdate_ids")
+        # print(update_conts_ids)
         for k in mongo_regions:
             status_dict = dict()
-            print("k['_id' regions] "+str(k['_id']))
+            # print("k['_id' regions] "+str(k['_id']))
             if k['_id'] in update_regions_ids:
-                print("kkkkk regions")
-                print(k)
+                # print("kkkkk regions")
+                # print(k)
                 req_dict = {}
                 req_dict["request"]="sync-update"
                 payload = {}
@@ -1216,7 +1217,7 @@ def handle_sync(action):
                     status_dict["regions"]="Successful"
                     status_dict['response'] = "local country update successful"
 
-                    print("Country for region above name "+str(continent.name))
+                    # print("Country for region above name "+str(continent.name))
 
                 except:
                     print("Continent Not found")

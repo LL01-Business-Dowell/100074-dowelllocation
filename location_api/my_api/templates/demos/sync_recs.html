@@ -10,7 +10,7 @@ Synchronize{% endblock %}
       <div class="container pt-10 pb-10">
         <!-- Section Content -->
         <div class="section-content">
-          <div class="row"> 
+          <div class="row">
             <div class="col-md-6">
               <h2 class="text-theme-colored2 font-36">Synchronize with Main Database</h2>
               <ol class="breadcrumb text-left mt-10 white">
@@ -28,7 +28,7 @@ Synchronize{% endblock %}
     <section id="schedule" class="divider parallax layer-overlay overlay-white-8" data-bg-img="http://placehold.it/1920x820">
       <div class="container pt-80 pb-60">
         <div class="section-content">
-          
+
           <div class="row">
             <div class="col-md-6">
             <form id="sncForm">
@@ -44,19 +44,19 @@ Synchronize{% endblock %}
                 <strong><u><h3>Missing in Local Db</h3></u></strong>
 
                 <ul class="list theme-colored">
-                  <h4>Continents</h4>
+                  <h4>Continents ({{length_mongo_difference_set}})</h4>
                     {% for r in mongo_continent_difference_set %}
                     <li>{{r}}</li>
                     {% empty %}
                     <p> All In Sync</p>
                   {% endfor %}
-                  <h4>Countries</h4>
+                  <h4>Countries ({{length_mongo_countries_difference_set}})</h4>
                     {% for r in mongo_countries_difference_set %}
                     <li>{{r}}</li>
                     {% empty %}
                     <p> All In Sync</p>
                   {% endfor %}
-                  <h4>Cities</h4>
+                  <h4>Cities ({{length_mongo_regions_difference_set}})</h4>
                     {% for r in mongo_regions_difference_set %}
                     <li>{{r}}</li>
                     {% empty %}
@@ -119,7 +119,7 @@ $("#sncButton").click(function(e){
                     $("#my_alert_box").append("<div class='alert alert-danger alert-dismissable'><button aria-hidden='true' data-dismiss='alert' class='close' type='button'> × </button> Error! Please check your data again </div></div>");
 
                 }
-                
+
             }
         });
         return false
