@@ -57,24 +57,29 @@ def rec_tz(request):
     return JsonResponse(response_data)
 
 
-def get_event_id():
-    dd = datetime.now()
-    time = dd.strftime("%d:%m:%Y,%H:%M:%S")
-    url = "https://100003.pythonanywhere.com/event_creation"
-    data = {"platformcode": "FB", "citycode": "101", "daycode": "0",
-            "dbcode": "pfm", "ip_address": "192.168.0.41",
-            "login_id": "lav", "session_id": "new",
-            "processcode": "1", "regional_time": time,
-            "dowell_time": time, "location": "22446576",
-            "objectcode": "1", "instancecode": "100074", "context": "Access  ",
-            "document_id": "3004", "rules": "some rules", "status": "work"
-            }
+def get_event_id(trigger="default"):
+    if trigger != "default":
+        dd = datetime.now()
+        time = dd.strftime("%d:%m:%Y,%H:%M:%S")
+        url = "https://100003.pythonanywhere.com/event_creation"
+        data = {"platformcode": "FB", "citycode": "101", "daycode": "0",
+                "dbcode": "pfm", "ip_address": "192.168.0.41",
+                "login_id": "lav", "session_id": "new",
+                "processcode": "1", "regional_time": time,
+                "dowell_time": time, "location": "22446576",
+                "objectcode": "1", "instancecode": "100074", "context": "Access  ",
+                "document_id": "3004", "rules": "some rules", "status": "work"
+                }
 
 
-    r = requests.post(url, json=data)
-    print("Event Response ")
-    print(r.text)
-    return r.text
+        r = requests.post(url, json=data)
+        print("Event Response ")
+        print(r.text)
+        return r.text
+    else:
+        return "default"
+
+    # return "defaullt"/
 def mongo_create(key_namer, data):
     team_member_id = {"continent":"1075", 'country':"1076","region":"1077","subregion":"1078", "req_resp_messages":"1087"}
     url = "http://100002.pythonanywhere.com/"
@@ -339,8 +344,10 @@ class CountryList(APIView):
         status_dict['project-code'] = kwargs['projectCode']
 
         try:
-            bad_id_list = [14,8,9,11,13,10,63, 64,16, 15]
-            countries = Countries.objects.all().exclude(id__in=bad_id_list)
+            bad_id_list = [14,8,9,11,13,10,63, 64,16, 15, 46]
+            bad_name_list = ["China_Error","dummy_country","dummy_country2","Indonesia_Error","Indonesia_Error","Myanmar_Error","Singapore_Error"]
+
+            countries = Countries.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list)
             serializer = CountrySerializer(countries, many=True)
             status_dict["isSuccess"]=True
             status_dict["isError"]=False
@@ -446,10 +453,61 @@ class RegionList(APIView):
     """
     List all countries, or create a new country.
     """
-    def get(self, request, format=None):
-        regions = Regions.objects.all()
-        serializer = RegionSerializer(regions, many=True)
-        return Response(serializer.data)
+    def get(self, request, format=None, **kwargs):
+        status_dict = dict()
+        # countries = Countries.objects.all()
+        # serializer = CountrySerializer(countries, many=True)
+        # status_dict["isSuccess"]=False
+        # countries/<slug:username>/<slug:sessionId>/<slug:projectCode>/
+        req_dict = {}
+        req_dict["request"]="region-list-request"
+        payload = {}
+        payload["username"]=kwargs['username']
+        payload["sessionId"]=kwargs['sessionId']
+        payload["projectCode"]=kwargs['projectCode']
+        req_dict["payload"]=str(payload)
+        status_dict['req'] = str(req_dict)
+##################
+        status_dict['url'] = "regions/username/sessionId/projectCode/"
+        status_dict['username'] = kwargs['username']
+        status_dict['session_id'] = kwargs['sessionId']
+        status_dict['project-code'] = kwargs['projectCode']
+
+        try:
+            bad_id_list = [1,2]
+            bad_name_list = ["dummy_region","dummy_region_22"]
+
+            # countries = Countries.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list)
+            regions = Regions.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list)
+            serializer = RegionSerializer(regions, many=True)
+            status_dict["isSuccess"]=True
+            status_dict["isError"]=False
+            # status_dict["continents"]="Successful"
+            status_dict['response'] = status.HTTP_200_OK
+            record_re(status_dict)
+            return Response(serializer.data)
+        except CustomError:
+            status_dict["isSuccess"]=False
+            status_dict["isError"]=True
+            # status_dict["continents"]="Successful"
+            status_dict['response'] = status.HTTP_400_BAD_REQUEST
+            record_re(status_dict)
+
+            return Response("Wrong query type '"+kwargs['query_type']+"'", status=status.HTTP_400_BAD_REQUEST)
+        except Http404:
+            status_dict["isSuccess"]=False
+            status_dict["isError"]=True
+            # status_dict["continents"]="Successful"
+            status_dict['response'] = status.HTTP_400_BAD_REQUEST
+            record_re(status_dict)
+
+            return Response("'"+ kwargs['query_value']+"' not in database", status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
 
     def post(self, request, format=None):
         serializer = RegionSerializer(data=request.data)
@@ -863,6 +921,7 @@ def record_re(kwargs):
     abdijan_date = datetime.now(pytz.timezone('Africa/Abidjan'))
     abdijan_time_string = date_time_cleaner(False, str(abdijan_date))
     event_id =  get_event_id()
+    # event_id =  "testId"
     payload = {
         "eventId":event_id,
     "request":kwargs['req'],
@@ -925,7 +984,7 @@ def sync_func(request):
     print("original paris time :"+str(paris_date))
     url = 'http://100032.pythonanywhere.com/api/targeted_population/'
     # mongo_create(key_namer, data):
-    event_id = get_event_id()
+    event_id = get_event_id("active")
     abdijan_time_string = date_time_cleaner(False, str(abdijan_date))
     data = {
         "req":"Insert","url_req":url, "response2":"Looks good2","username":"Programmer",

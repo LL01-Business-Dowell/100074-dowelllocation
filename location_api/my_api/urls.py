@@ -3,15 +3,16 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from my_api import views
 
 urlpatterns = [
-        path('', views.home),
+        path('', views.api),
         path('home/', views.api, name='home'),
 
         path('api/',views.api, name='api'),
 
     path('continents/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.ContinentList.as_view()),
     path('countries/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.CountryList.as_view()),
+    path('regions/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.RegionList.as_view()),
     # path('country/<int:pk>/', views.CountryDetail.as_view()),
-    path('country/<slug:query_type>/<slug:query_value>/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.CountryDetail.as_view()),
+    path('country/<slug:query_type>/<str:query_value>/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.CountryDetail.as_view()),
     path('region/<int:pk>/', views.RegionDetail.as_view()),
     path('region/<slug:query_type>/<str:query_value>/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.RegionDetail.as_view()),
     path('target-function/', views.target_func, name='target-funtion'),
@@ -25,7 +26,7 @@ urlpatterns = [
     path('sync-func/', views.sync_func, name='sync-func'),
     path('rec-tz/', views.rec_tz, name='rec-tz'),
 
-    
+
     path('display-req-resp/', views.DisplayReqResp.as_view(), name='display-req-resp'),
 
     path('sync-function/', views.SyncFunc.as_view(), name='sync-function'),
