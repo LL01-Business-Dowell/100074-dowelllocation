@@ -7,6 +7,7 @@ urlpatterns = [
         path('home/', views.api, name='home'),
 
         path('api/',views.api, name='api'),
+    path('get-coords/', views.GetCoords.as_view()),
 
     path('continents/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.ContinentList.as_view()),
     path('countries/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.CountryList.as_view()),
