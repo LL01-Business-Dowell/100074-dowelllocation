@@ -1,0 +1,138 @@
+{% extends 'bases/base1.html' %}
+{% load static %}
+
+{% block title %}
+Mongo Regions{% endblock %}
+  {% block content %}
+
+    <!-- Section: inner-header -->
+    <section class="inner-header divider layer-overlay overlay-theme-colored-7" data-bg-img="http://placehold.it/1920x820">
+      <div class="container pt-10 pb-10">
+        <!-- Section Content -->
+        <div class="section-content">
+          <div class="row"> 
+            <div class="col-md-6">
+              <h2 class="text-theme-colored2 font-36">Regions From Main Db</h2>
+              <ol class="breadcrumb text-left mt-10 white">
+                <!-- <li><a href="#">Book</a></li> -->
+                <li><a href="#">Regions from </a></li>
+                <li class="active">{{name}}</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Schedule -->
+    <section id="schedule" class="divider parallax layer-overlay overlay-white-8" data-bg-img="http://placehold.it/1920x820">
+      <div class="container pt-80 pb-60">
+        <div class="section-content">
+          <div class="row">
+            <div class="col-md-12">
+              <table  id ="regionList" class="table table-striped table-schedule">
+                <thead>
+                  <tr class="bg-theme-colored">
+                    
+                    <th>Region</th>
+                    <th>Id</th>
+                    <th>Code</th>
+                    <th>Short</th>
+                    <th>Event Id</th>
+                    <th>Country Id</th>
+
+                    <!-- <th></th> -->
+
+                  </tr>
+                  
+                </thead>
+                <tbody>
+                  {% for r in records %}
+                  <tr>
+                      <td><strong> {{r.name}}</strong></td>
+                      <td> {{r.ID}}</td>
+                      <td> {{r.code}}</td>
+                      <td> {{r.short}}</td>
+                      <td> {{r.eventId}}</td>
+                      <td> {{r.country}}</td>
+                      <!-- <td><strong><a href="#">Regions/Cities</a></strong></td> -->
+                      
+                  </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Region</th>
+                        <th>Id</th>
+                        <th>Code</th>
+                        <th>Short</th>
+                        <th>Event Id</th>
+                        <th>Country Id</th>
+                    </tr>
+              </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endblock content %}
+
+  <!-- end main-content -->
+
+<!-- Footer Scripts -->
+<!-- JS | Custom script for all pages -->
+{% block additionalscript %}
+<script type="text/javascript" src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="{% static 'js/custom.js' %}"></script>
+<script>
+  // Setup - add a text input to each footer cell
+  $('#regionList tfoot th').each(function () {
+        var title = $(this).text();
+        $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+    });
+ let bookTableList = $('#regionList').DataTable( {
+        fixedHeader: true,
+        "scrollX": true,
+        initComplete: function () {
+            // Apply the search
+            this.api()
+                .columns()
+                .every(function () {
+                    var that = this;
+ 
+                    $('input', this.footer()).on('keyup change clear', function () {
+                        if (that.search() !== this.value) {
+                            that.search(this.value).draw();
+                        }
+                    });
+                });
+        },
+    } );
+ 
+ 
+    // DataTable
+    // var table = $('#authorList').DataTable({
+    //     initComplete: function () {
+    //         // Apply the search
+    //         this.api()
+    //             .columns()
+    //             .every(function () {
+    //                 var that = this;
+ 
+    //                 $('input', this.footer()).on('keyup change clear', function () {
+    //                     if (that.search() !== this.value) {
+    //                         that.search(this.value).draw();
+    //                     }
+    //                 });
+    //             });
+    //     },
+    // });
+
+</script>
+{% endblock %}
+
