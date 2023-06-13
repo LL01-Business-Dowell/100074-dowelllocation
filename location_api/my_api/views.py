@@ -1583,8 +1583,8 @@ class GetCoords(APIView):
         return JsonResponse({"status":"Kindly use POST request"})
     def post(self, request):
         place_name = request.data.get('region')
-        # url='https://maps.googleapis.com/maps/api/place/details/json?placeid='+place_id+'&key=AIzaSyC_oMIdGvpBALKg6W6TPgpwVLb-viGwonY'
-        url= 'https://maps.googleapis.com/maps/api/geocode/json?address='+place_name+'&key=AIzaSyA_i4bbFV0iKxU_nUI7L3p0--r6UR89du4'
+        # url='https://maps.googleapis.com/maps/api/place/details/json?placeid='+place_id+'&key=APIKEY-viGwonY'
+        url= 'https://maps.googleapis.com/maps/api/geocode/json?address='+place_name+'&key=APIKEY'
         
 
         try:
