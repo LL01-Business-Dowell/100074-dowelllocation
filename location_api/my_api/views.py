@@ -1584,15 +1584,15 @@ class GetCoords(APIView):
     def post(self, request):
         place_name = request.data.get('region')
         # url='https://maps.googleapis.com/maps/api/place/details/json?placeid='+place_id+'&key=AIzaSyC_oMIdGvpBALKg6W6TPgpwVLb-viGwonY'
-        url= 'https://maps.googleapis.com/maps/api/geocode/json?address='+place_name+'&key=AIzaSyA_i4bbFV0iKxU_nUI7L3p0--r6UR89du4'
-        
+        # url= 'https://maps.googleapis.com/maps/api/geocode/json?address='+place_name+'&key=AIzaSyA_i4bbFV0iKxU_nUI7L3p0--r6UR89du4'
+
 
         try:
-            r=requests.get(url)
-            results = json.loads(r.text)
-            location_needed = results['results'][0]['geometry']['location']
-            res = {"Coords": location_needed}
-
+            # r=requests.get(url)
+            # results = json.loads(r.text)
+            # location_needed = results['results'][0]['geometry']['location']
+            # res = {"Coords": location_needed}
+            res = {"Coords": "Kindly wait api in maintenance. Thank you for your patience"}
             return Response(res,status=status.HTTP_200_OK)
         except CustomError:
 
