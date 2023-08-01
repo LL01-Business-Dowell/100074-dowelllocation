@@ -12,6 +12,7 @@ from datetime import datetime, timezone, timedelta
 from django.views import View
 import pandas as pd
 from pathlib import Path
+import traceback
 
 from .login import get_user_profile
 import sys
@@ -21,8 +22,31 @@ import zoneinfo
 import json
 import requests
 import pprint
+from .foreign_data import external_locs as el
+from .foreign_data import country_mapper, continent_mapper
 # Create your views here.
 BASE_DIR = Path(__file__).resolve().parent.parent
+def processApikey(api_key):
+    url = f'https://100105.pythonanywhere.com/api/v3/process-services/?type=api_service&api_key={api_key}'
+    print(api_key)
+    print(url)
+    payload = {
+        "service_id" : "DOWELL10018"
+    }
+
+    response = requests.post(url, json=payload)
+    print("response.status === ", response.status_code)
+    print("response === ", response.text)
+    # if response.status_code == 400 or response.status_code == "400":
+        # raise CustomError
+    # else:
+
+    # response.status_code
+    res = json.loads(response.text)
+    print("res.success",res["success"])
+    print("res.success type",type(res["success"]))
+    return response
+
 def home(request):
     # session = request.GET.get("session_id", None)
     # if session:
@@ -36,6 +60,7 @@ def home(request):
     # else:
     #     return redirect("https://100014.pythonanywhere.com/")
     return render(request, 'api/home.html')
+
 def api(request):
     return render(request, 'api/api.html')
 def rec_tz(request):
@@ -55,7 +80,22 @@ def rec_tz(request):
 
     response_data = {'error': True, 'status': "not ok"}
     return JsonResponse(response_data)
+def give_refined_coords(raw):
+    offlat = 0
+    if "N" in raw:
+        offlat = raw.find("N")
+        # print("offlatN : ", offlat )
+    elif "S" in raw:
+        offlat = raw.find("S")
+        # print("offlatS : ", offlat )
 
+    latt = raw[0:offlat+1].strip()
+    longg = raw[offlat+1:].strip()
+    # print("lattitude : ", latt )
+    # print("longitude : ", longg)
+    # print("---------------------------------------")
+
+    return {"lat":latt,"lng":longg}
 
 def get_event_id(trigger="default"):
     if trigger != "default":
@@ -222,6 +262,77 @@ def eventId_rectifier():
             # cont.save()
         else:
             print("Continent: "+str(country.name)+" --> error : "+str(re["error"]))
+def get_loc_dict():
+    major_dict = {}
+    mongo_data = mongo_read('region', 'name')
+    for i in mongo_data:
+        major_dict[i['name'].lower()] = i
+    return major_dict
+def gen_loc_json(request):
+    culprit = get_loc_dict()
+    try:
+        culprit = get_loc_dict()
+        with open('regions.json', 'w') as f:
+    #         if len(f.read()) == 0:
+            f.write(json.dumps(culprit))
+            return JsonResponse({"status":"Ok", "successful":True, "error":False})
+    except Exception as error:
+        return JsonResponse({"status":"error",  "error":True, "message": error})
+
+def search_region(key, value, json_file, all_values = False):
+    key = key.lower()
+    print("Key--->>",key)
+    """
+    Function that will  search in json file
+
+    Args:
+        key: key to search
+        value: value to search
+        json_file: the file to search
+
+    Returns:
+
+    """
+    with open(json_file, 'r') as file:
+        data = json.load(file)
+#         print(data)print("Key in if --->>",key)
+        if key in data and key != 'nairobi' :
+            print("Key in if --->>",key)
+            print("data[key]in if --->>",data[key])
+            if all_values:
+                return data[key]
+            # return data[key][value]
+            try:
+                res= {
+                'location':data[key][value],
+                'country':country_mapper[data[key]["country"]],
+                'continent':continent_mapper[data[key]["continent"]],
+                }
+            except Exception as err:
+                print("hihisishishish")
+                print(err, traceback.format_exc())
+                return False
+            return res
+        else:
+            print("Not in else")
+            if key in el:
+                print("el[key]in if --->>",el[key])
+                if all_values:
+                    return el[key]
+                # return el[key][0]
+                try:
+                    res= {
+                'location':el[key][0],
+                'country':el[key][1],
+                'continent':el[key][2],
+                }
+                except Exception as err:
+                    print("sgsgsgsgsgsgsggsgsgsgsgs")
+                    print(err, traceback.format_exc())
+                    return False
+                return res
+            print("It is no where to be seen")
+            return False
 # class CreateLocs
 def loc_creator(request):
     # key_namer = "continent"
@@ -353,7 +464,7 @@ class CountryList(APIView):
             status_dict["isError"]=False
             # status_dict["continents"]="Successful"
             status_dict['response'] = status.HTTP_200_OK
-            record_re(status_dict)
+            # record_re(status_dict)
 
             return Response(serializer.data)
         except CustomError:
@@ -475,16 +586,16 @@ class RegionList(APIView):
 
         try:
             bad_id_list = [1,2]
-            bad_name_list = ["dummy_region","dummy_region_22"]
+            bad_name_list = ["dummy_region","dummy_region_22", "Bangalore"]
 
             # countries = Countries.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list)
-            regions = Regions.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list)
+            regions = Regions.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list).order_by('name')
             serializer = RegionSerializer(regions, many=True)
             status_dict["isSuccess"]=True
             status_dict["isError"]=False
             # status_dict["continents"]="Successful"
             status_dict['response'] = status.HTTP_200_OK
-            record_re(status_dict)
+            # record_re(status_dict)
             return Response(serializer.data)
         except CustomError:
             status_dict["isSuccess"]=False
@@ -629,7 +740,7 @@ class RegionDetail(APIView):
             status_dict["isError"]=False
             # status_dict["continents"]="Successful"
             status_dict['response'] = status.HTTP_200_OK
-            record_re(status_dict)
+            # record_re(status_dict)
             return Response(serializer.data)
         except CustomError:
             status_dict["isSuccess"]=True
@@ -1583,12 +1694,11 @@ class GetCoords(APIView):
         return JsonResponse({"status":"Kindly use POST request"})
     def post(self, request):
         place_name = request.data.get('region')
+        myDict = request.data
 
-        # url='https://maps.googleapis.com/maps/api/place/details/json?placeid='+place_id+'&key=AIzaSyC_oMIdGvpBALKg6W6TPgpwVLb-viGwonY'
-        # url= 'https://maps.googleapis.com/maps/api/geocode/json?address='+place_name+'&key=AIzaSyA_i4bbFV0iKxU_nUI7L3p0--r6UR89du4'
 
-        # url='https://maps.googleapis.com/maps/api/place/details/json?placeid='+place_id+'&key=APIKEY-viGwonY'
-        url= 'https://maps.googleapis.com/maps/api/geocode/json?address='+place_name+'&key=APIKEY'
+
+        # url= 'https://maps.googleapis.com/maps/api/geocode/json?address='+place_name+'&key=APIKEY'
 
 
 
@@ -1597,8 +1707,27 @@ class GetCoords(APIView):
             # results = json.loads(r.text)
             # location_needed = results['results'][0]['geometry']['location']
             # res = {"Coords": location_needed}
-            res = {"Coords": "Kindly wait api in maintenance. Thank you for your patience"}
-            return Response(res,status=status.HTTP_200_OK)
+            wanted_api_key = myDict['api_key']
+            print("wanted_api_key ------>>> ", wanted_api_key)
+            type_error_message = "Invalid key."
+            res = processApikey(wanted_api_key)
+            if res.status_code == 400:
+                result = json.loads(res.text)
+                type_error_message = type_error_message + " "+result["message"]
+                # raise CustomError(type_error_message)
+                return Response(type_error_message,status=status.HTTP_400_BAD_REQUEST)
+            loc_needed = search_region(place_name, "lat_lon", 'regions.json')
+            print("loc_needed---->>>>",loc_needed)
+
+
+            if loc_needed:
+                loc_needed['location'] = give_refined_coords(loc_needed['location'])
+                res = {"data": loc_needed}
+                # res = {"Coords": "Kindly wait api in maintenance. Thank you for your patience"}
+                return Response(res,status=status.HTTP_200_OK)
+            else:
+                message = "The city("+place_name+") is not availabe in database. Kindly contact the your admin."
+                return Response(message, status=status.HTTP_400_BAD_REQUEST)
         except CustomError:
 
 

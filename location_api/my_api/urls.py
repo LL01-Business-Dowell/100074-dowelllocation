@@ -26,6 +26,8 @@ urlpatterns = [
     path('local-regions/<int:pk>', views.local_regions, name='local-regions'),
     path('sync-func/', views.sync_func, name='sync-func'),
     path('rec-tz/', views.rec_tz, name='rec-tz'),
+    path('gen-loc-json/', views.gen_loc_json, name='gen-loc-json'),
+
 
 
     path('display-req-resp/', views.DisplayReqResp.as_view(), name='display-req-resp'),
