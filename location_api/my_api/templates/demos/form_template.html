@@ -1,0 +1,352 @@
+{% extends 'bases/base3.html' %}
+{% load static %}
+
+
+{% block title %}Add Details To Master{% endblock title %}
+{% block addcss %}
+ <style>
+        #map {
+            width: 100%;
+            height: 400px; /* Adjust the height as needed */
+        }
+    </style>
+
+ {% endblock addcss %}
+
+  {% block content %}
+   {% if regionForm %}
+  <!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAsH8omDk8y0lSGLTW9YtZiiQ2MkmsF-uQ&libraries=places"></script>
+ <script type="javascript"  src="{% static 'js/map.js' %}"></script>
+           {% endif %}
+<section class="divider">
+  <div class="container">
+
+    <div class="row">
+
+      <div class="col-md-6 col-md-push-3">
+        <div class="border-1px p-30 mb-0">
+             {% if continentForm %}
+          <h3 class="text-theme-colored mt-0 pt-5">Continent Register</h3>
+          {% endif %}
+          {% if countryForm %}
+          <h3 class="text-theme-colored mt-0 pt-5">Country Register</h3>
+          {% endif %}
+          {% if regionForm %}
+          <h3 class="text-theme-colored mt-0 pt-5">City Register</h3>
+          {% endif %}
+          {% if subRegionForm %}
+          <h3 class="text-theme-colored mt-0 pt-5">Sub-Region Register</h3>
+          {% endif %}
+          <hr>
+          <p id="alert_p">
+
+          {% if success %}
+    <div class="alert alert-success alert-dismissible" role="alert">
+ <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+ <strong>Success!</strong> Information has been successfully submitted
+</div>
+
+{% endif %}
+{% if error %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+ <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+ <strong>Error!</strong> {{message}}
+</div>
+
+{% endif %}
+          </p>
+
+          <form id="loc_form" method="post">
+            {% csrf_token %}
+            <!--Continent Form-->
+             {% if continentForm %}
+             <div class="row">
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label>{{ form.name.label_tag }} <small>*</small></label>
+                              {{ form.name }}
+                            </div>
+                          </div>
+                        </div>
+            <div class="row">
+                          <div class="col-sm-4">
+                            <div class="form-group">
+                                 <button class = "btn btn-block btn-dark btn-theme-colored btn-sm mt-20 pt-10 pb-10"type="submit">Submit</button>
+                            </div>
+                          </div>
+                        </div>
+             {% endif %}
+
+             <!--Country FOrm-->
+
+             {% if countryForm %}
+             <div class="row">
+
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label>{{ form.continent.label_tag }} <small>*</small></label>
+                              {{ form.continent }}
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label>{{ form.name.label_tag }} <small>*</small></label>
+                              {{ form.name }}
+                            </div>
+                          </div>
+                        </div>
+         <div class="row">
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label>{{ form.country_code.label_tag}} <small>*</small></label>
+                              {{ form.country_code }}
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label>{{ form.country_short.label_tag }} <small>*</small></label>
+                              {{ form.country_short }}
+                            </div>
+                          </div>
+                        </div>
+         <div class="row">
+                          <div class="col-sm-4">
+                            <div class="form-group">
+                                 <button class = "btn btn-block btn-dark btn-theme-colored btn-sm mt-20 pt-10 pb-10"type="submit">Submit</button>
+                            </div>
+                          </div>
+                        </div>
+             {% endif %}
+
+
+             <!--Region Form-->
+             {% if regionForm %}
+
+             <div class="row">
+
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label>{{ form.country.label_tag }} <small>*</small></label>
+                              {{ form.country }}
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label>{{ form.name.label_tag }} <small>*</small></label>
+                              {{ form.name }}
+                            </div>
+                          </div>
+
+                        </div>
+         <div class="row">
+
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label>{{ form.city_code.label_tag }} <small>*</small></label>
+                              {{ form.city_code }}
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label>{{ form.city_area.label_tag }} <small>*</small></label>
+                              {{ form.city_area }}
+                            </div>
+                          </div>
+                        </div>
+            <div class="row">
+
+                          <div class="col-sm-8">
+                            <div class="form-group">
+                              <label>Latitude Value <small>*</small></label>
+                              <input name="lat_value" id="lat_value_id" class="form-control required" placeholder="eg. 51.003848" type="text">
+                            </div>
+                          </div>
+                          <div class="col-sm-4">
+                            <div class="form-group">
+                              <label>Direction <small>*</small></label>
+                      <select name="lat_direction" id="lat_direction_id" class="form-control required">
+                        <option value="N">N</option>
+                        <option value="S">S</option>
+
+                      </select>
+                            </div>
+                          </div>
+
+
+                        </div>
+            <div class="row">
+
+                          <div class="col-sm-8">
+                            <div class="form-group">
+                              <label>Longitude Value <small>*</small></label>
+                              <input name="lon_value" id="lon_value_id" class="form-control required" placeholder="eg. -51.003848" type="text">
+                            </div>
+                          </div>
+                          <div class="col-sm-4">
+                            <div class="form-group">
+                              <label>Direction <small>*</small></label>
+                              <select name="lon_direction" id="lon_direction_id" class="form-control required">
+                        <option value="E">E</option>
+                        <option value="W">W</option>
+
+                      </select>
+                            </div>
+                          </div>
+
+
+                        </div>
+         <div class="row">
+                          <div class="col-sm-4">
+                            <div class="form-group">
+                                 <button id="region_btn" class = "btn btn-block btn-dark btn-theme-colored btn-sm mt-20 pt-10 pb-10"type="submit">Submit</button>
+                            </div>
+                          </div>
+                        </div>
+             {% endif %}
+
+             <!--Subregion Form -->
+       {% if subRegionForm %}
+             <div class="row">
+
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label>{{ form.regions.label_tag }} <small>*</small></label>
+                              {{ form.regions }}
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label>{{ form.name.label_tag }} <small>*</small></label>
+                              {{ form.name }}
+                            </div>
+                          </div>
+                        </div>
+         <div class="row">
+                          <div class="col-sm-4">
+                            <div class="form-group">
+                                 <button class = "btn btn-block btn-dark btn-theme-colored btn-sm mt-20 pt-10 pb-10"type="submit">Submit</button>
+                            </div>
+                          </div>
+                        </div>
+             {% endif %}
+
+
+
+        </form>
+          <!-- Job Form Validation-->
+          <script type="text/javascript">
+          function validateUsername() {
+       alert("Working");
+    }
+    let temp_alert = '<div style= "display: none;" id="loc_alert" class="alert alert-danger alert-dismissible" role="alert">\
+ <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
+<p id="message_text"> <strong>Error!</strong> </p>\
+</div>'
+    function validateLatitude() {
+       // Get the value from the selected option in a dropdown
+        lat_value_val= $( "#lat_value_id" ).val();
+        lat_direction_val = $( "#lat_direction_id" ).val();
+
+        if (lat_direction_val == "N"){
+            if (lat_value_val.charAt(0) == "-"){
+                $("#alert_p").append(temp_alert);
+                message_text = "North does not take a negative value"
+                return false
+            } else{
+                return true
+            }
+        }
+        if (lat_direction_val == "S"){
+            if (lat_value_val.charAt(0) == "-"){
+                return true
+            } else{
+                $("#alert_p").append(temp_alert);
+                message_text = "South does takes a negative value"
+                return false
+            }
+        }
+
+
+        // alert("lat_value"+lat_value_val.charAt(0)+"lat_direction_val"+lat_direction_val);
+    }
+    function validateLongitude() {
+        lon_value= $( "#lon_value_id" ).val();
+        lon_direction = $( "#lon_direction_id" ).val();
+
+        // alert("lon_value"+lon_value+"lon_direction"+lon_direction);
+        if (lon_direction == "E"){
+            if (lon_value.charAt(0) == "-"){
+                $("#alert_p").append(temp_alert);
+                message_text = "East does not take a negative value"
+                return false
+            } else{
+                return true
+            }
+        }
+        if (lon_direction == "W"){
+            if (lon_value.charAt(0) == "-"){
+                return true
+            } else{
+                $("#alert_p").append(temp_alert);
+                message_text = "West does takes a negative value"
+                return false
+            }
+        }
+
+    }
+            loc_form = $('#loc_form')
+            $('#region_btn').click(function (){
+            lat_val = validateLatitude()
+            lon_val = validateLongitude()
+            if (!lat_val || !lon_val){
+            $("#message_text").text(message_text);
+                $("#loc_alert").css({'display':'block'});
+                // setTimeout(function(){  $("#loc_alert").css({'display':'none'}) }, 200);
+
+            }
+                // validateUsername()
+            })
+            // $("#job_apply_form").validate({
+
+            //   submitHandler: function(form) {
+            //     var form_btn = $(form).find('button[type="submit"]');
+            //     // validateUsername();
+            //     var form_result_div = '#form-result';
+            //     $(form_result_div).remove();
+            //     form_btn.before('<div id="form-result" class="alert alert-success" role="alert" style="display: none;"></div>');
+            //     var form_btn_old_msg = form_btn.html();
+            //     form_btn.html(form_btn.prop('disabled', true).data("loading-text"));
+            //     $(form).ajaxSubmit({
+            //       dataType:  'json',
+            //       success: function(data) {
+            //         if( data.status == 'true' ) {
+            //           $(form).find('.form-control').val('');
+            //         }
+            //         form_btn.prop('disabled', false).html(form_btn_old_msg);
+            //         $(form_result_div).html(data.message).fadeIn('slow');
+            //         setTimeout(function(){ $(form_result_div).fadeOut('slow') }, 6000);
+            //       }
+            //     });
+            //   }
+            // });
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+    {% endblock content %}
+
+  <!-- end main-content -->
+
+<!-- Footer Scripts -->
+<!-- JS | Custom script for all pages -->
+{% block additionalscript %}
+
+<script src="{% static 'js/custom.js' %}"></script>
+<script>
+
+</script>
+
+{% endblock %}

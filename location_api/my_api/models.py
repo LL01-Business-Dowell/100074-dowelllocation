@@ -6,8 +6,8 @@ class Continent(models.Model):
     name = models.CharField(max_length=300)
     mongo_id = models.CharField(max_length=300, default="CONTINENTMONGOID")
     event_id = models.CharField(max_length=300, default="EVENTMONGOID")
-    # def __str__(self):
-    #     return self.name
+    def __str__(self):
+        return self.name
     @classmethod
     def get_default_pk(cls):
         continent, created = cls.objects.get_or_create(

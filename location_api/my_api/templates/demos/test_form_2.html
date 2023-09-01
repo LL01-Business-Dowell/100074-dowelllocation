@@ -1,0 +1,260 @@
+{% extends 'bases/base3.html' %}
+{% load static %}
+{% block addcss %}
+<style>
+    #map {
+        width: 100%;
+        height: 400px;
+        /* Adjust the height as needed */
+    }
+    #loc_div{
+        background-color:#D3D3D3;
+    }
+</style>
+
+{% endblock addcss %}
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var $j = jQuery.noConflict(true);
+</script>
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAsH8omDk8y0lSGLTW9YtZiiQ2MkmsF-uQ&libraries=places"></script>
+<!--<script type="javascript"  src="{% static 'js/map.js' %}"></script>-->
+<section class="divider">
+    <div class="container">
+
+        <!--    <div class="row">-->
+        <input style="display:none;" type="text" id="locationInput" placeholder="Enter a location">
+        <!--         <div id="map" class="col-md-12 col-md-push-3">-->
+
+
+        <!--  </div>-->
+        <!--      </div>-->
+
+
+
+        {% if regionForm %}
+
+        <div class="row">
+            <!--<input type="text" id="locationInput" placeholder="Enter a location">-->
+            
+            <div id="loc_div" class="col-md-6">
+                <form id="loc_form" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>{{ form.country.label_tag }} <small>*</small></label>
+                                {{ form.country }}
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>{{ form.name.label_tag }} <small>*</small></label>
+                                {{ form.name }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>{{ form.city_code.label_tag }} <small>*</small></label>
+                                {{ form.city_code }}
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>{{ form.city_area.label_tag }} <small>*</small></label>
+                                {{ form.city_area }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget border-2px p-30">
+                    <div class="row">
+
+                        <div class="col-sm-8">
+                            <!--<div class="widget border-1px p-30">-->
+                            <div class="form-group">
+                                <label>Latitude Value <small>*</small></label>
+                                <input name="lat_value" id="lat_value_id" class="form-control required"
+                                    placeholder="eg. 51.003848" type="text">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Direction <small>*</small></label>
+                                <select name="lat_direction" id="lat_direction_id" class="form-control required">
+                                    <option value="N">N</option>
+                                    <option value="S">S</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+
+                        <div class="col-sm-8">
+                            <div class="form-group">
+                                <label>Longitude Value <small>*</small></label>
+                                <input name="lon_value" id="lon_value_id" class="form-control required"
+                                    placeholder="eg. -51.003848" type="text">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Direction <small>*</small></label>
+                                <select name="lon_direction" id="lon_direction_id" class="form-control required">
+                                    <option value="E">E</option>
+                                    <option value="W">W</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <button  id="text_locs_btn" class="btn btn-border btn-theme-colored btn-sm mt-0" data-loading-text="Please wait...">Test</button>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <button id="region_btn"
+                                    class="btn btn-block btn-dark btn-theme-colored btn-sm mt-20 pt-10 pb-10"
+                                    type="submit">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div id="map" class="col-md-6">
+
+
+            </div>
+        </div>
+        {% endif %}
+
+
+
+
+
+
+
+
+    </div>
+</section>
+{% endblock content %}
+
+<!-- end main-content -->
+
+<!-- Footer Scripts -->
+<!-- JS | Custom script for all pages -->
+{% block additionalscript %}
+
+<!--<script src="{% static 'js/custom.js' %}"></script>-->
+<script>
+    $(document).ready(function () {
+        var map;
+        var geocoder;
+
+        // Initialize the map
+        function initMap() {
+             map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 0, lng: 0 },
+                zoom: 8
+            });
+
+            geocoder = new google.maps.Geocoder();
+            $('#text_locs_btn').click(function(e){
+                 e.preventDefault(e);
+            
+	        let lat_val = $('#lat_value_id').val()
+	        let lon_val = $('#lon_value_id').val()
+	        let wanted_mess = lat_val.concat(" ", lon_val);
+	       // let input = "Nairobi";
+	        
+	        console.log("wanted_mess ===> "+wanted_mess)
+	        var input = document.getElementById('locationInput');
+	        input.setAttribute('value', 'Nairobi');
+	        displayLocOnMapLatLon(lat_val, lon_val);
+	        console.log("input ===> "+input)
+	       var searchBox = new google.maps.places.SearchBox(input);
+
+            searchBox.addListener('places_changed', function () {
+                var places = searchBox.getPlaces();
+
+                if (places.length === 0) {
+                    return;
+                }
+
+                var place = places[0];
+                if (!place.geometry) {
+                    console.log("Place details not found");
+                    return;
+                }
+
+                // Display the location on the map
+                // displayLocationOnMap(place.geometry.location);
+                
+            });
+});
+            
+            
+        }
+
+        function displayLocationOnMap(location) {
+            map.setCenter(location);
+
+            var marker = new google.maps.Marker({
+                map: map,
+                position: location
+            });
+        }
+        function displayLocOnMapLatLon(lat_str, lon_str){
+            lat_num =  lat_str.match(/-?\d+\.\d+/g);
+            lon_num = lon_str.match(/-?\d+\.\d+/g);
+            console.log("lat_num ===> "+lat_num)
+            console.log("lon_num ===> "+lon_num)
+            var newLatlng = new google.maps.LatLng(lat_num,lon_num);
+            
+            // map = new google.maps.Map(document.getElementById('map'), {
+            //     center: { lat: Number(lat_num), lng: Number(lon_num) },
+            //     zoom: 4
+            // });
+            map.panTo(newLatlng);
+            map.setZoom(12)
+            const marker = new google.maps.Marker({
+    // The below line is equivalent to writing:
+    // position: new google.maps.LatLng(-34.397, 150.644)
+    position: { lat: Number(lat_num), lng:Number(lon_num)},
+    map: map,
+  });
+  
+  
+  
+  const infowindow = new google.maps.InfoWindow({
+    content: "<p>Marker Location:" + marker.getPosition() + "</p>",
+  });
+
+  google.maps.event.addListener(marker, "click", () => {
+    infowindow.open(map, marker);
+  });
+  
+  
+  
+        }
+        initMap();
+    });
+
+
+
+
+
+</script>
+
+{% endblock %}

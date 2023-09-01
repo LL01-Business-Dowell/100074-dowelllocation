@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from my_api import views
-
+from my_api import loc_recs_view
 urlpatterns = [
         path('', views.api),
         path('home/', views.api, name='home'),
@@ -12,6 +12,7 @@ urlpatterns = [
     path('continents/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.ContinentList.as_view()),
     path('countries/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.CountryList.as_view()),
     path('regions/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.RegionList.as_view()),
+    path('regions/', views.RegionList2.as_view()),
     # path('country/<int:pk>/', views.CountryDetail.as_view()),
     path('country/<slug:query_type>/<str:query_value>/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.CountryDetail.as_view()),
     path('region/<int:pk>/', views.RegionDetail.as_view()),
@@ -28,12 +29,17 @@ urlpatterns = [
     path('rec-tz/', views.rec_tz, name='rec-tz'),
     path('gen-loc-json/', views.gen_loc_json, name='gen-loc-json'),
 
-
-
+    path('create-continent/', loc_recs_view.create_continent, name='create_continent'),
+    path('create-country/', loc_recs_view.create_country, name='create_country'),
+    path('create-region/', loc_recs_view.create_region, name='create_region'),
+    path('create-sub-region/', loc_recs_view.create_sub_region, name='create_sub_region'),
+    path('my-form-test/', loc_recs_view.my_form_test, name='my-form-test'),
     path('display-req-resp/', views.DisplayReqResp.as_view(), name='display-req-resp'),
 
     path('sync-function/', views.SyncFunc.as_view(), name='sync-function'),
     path('create-loc/', views.CreateFunc.as_view(), name='create-loc'),
+    path('insert-mylocs/', views.insert_mylocs, name='insert-mylocs'),
+
 
 
 ]

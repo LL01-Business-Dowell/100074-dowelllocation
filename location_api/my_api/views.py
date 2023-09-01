@@ -22,8 +22,10 @@ import zoneinfo
 import json
 import requests
 import pprint
-from .foreign_data import external_locs as el
-from .foreign_data import country_mapper, continent_mapper
+from .foreign_data import external_locs as elt
+from .foreign_data import country_mapper, continent_mapper, write_locs, read_locs, del_locs
+from decouple import config
+default_key =  config("DEF_KEY")
 # Create your views here.
 BASE_DIR = Path(__file__).resolve().parent.parent
 def processApikey(api_key):
@@ -293,10 +295,11 @@ def search_region(key, value, json_file, all_values = False):
     Returns:
 
     """
+    exceptional_list = ['nairobi', 'london']
     with open(json_file, 'r') as file:
         data = json.load(file)
 #         print(data)print("Key in if --->>",key)
-        if key in data and key != 'nairobi' :
+        if key in data and key not in exceptional_list :
             print("Key in if --->>",key)
             print("data[key]in if --->>",data[key])
             if all_values:
@@ -314,7 +317,8 @@ def search_region(key, value, json_file, all_values = False):
                 return False
             return res
         else:
-            print("Not in else")
+            print("Not in else after el")
+            el = read_locs()
             if key in el:
                 print("el[key]in if --->>",el[key])
                 if all_values:
@@ -355,15 +359,15 @@ def loc_creator(request):
          'code':'None',
          'short':'None',
     }
-    re = mongo_create(key_namer, data)
+    # re = mongo_create(key_namer, data)
     # re = mongo_update(key_namer, mongo_id,data)
 
-    if re["isSuccess"]:
-        print("Continent:  --> insert Id: "+str(re["inserted_id"]))
+    # if re["isSuccess"]:
+        # print("Continent:  --> insert Id: "+str(re["inserted_id"]))
         # print("Continent:  --> insert Id: ")
 
-    else:
-        print("Continent:  --> error : "+str(re["error"]))
+    # else:
+        # print("Continent:  --> error : "+str(re["error"]))
     return render (request, 'demos/create_locs.html')
 
 class CustomError(Exception):
@@ -455,7 +459,7 @@ class CountryList(APIView):
         status_dict['project-code'] = kwargs['projectCode']
 
         try:
-            bad_id_list = [14,8,9,11,13,10,63, 64,16, 15, 46]
+            bad_id_list = [14,8,9,11,13,10,63, 64,16, 15, 46, 78]
             bad_name_list = ["China_Error","dummy_country","dummy_country2","Indonesia_Error","Indonesia_Error","Myanmar_Error","Singapore_Error"]
 
             countries = Countries.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list)
@@ -620,6 +624,40 @@ class RegionList(APIView):
 
 
 
+    def post(self, request, format=None):
+        serializer = RegionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+############################REGION2 HANDLING################
+class RegionList2(APIView):
+    """
+    List all countries, or create a new country.
+    """
+    def get(self, request, format=None, **kwargs):
+        try:
+            wanted_api_key = self.request.query_params.get("api_key")
+            print("wanted_api_key ------>>> ", wanted_api_key)
+            type_error_message = "Invalid key."
+            if wanted_api_key != default_key:
+                res = processApikey(wanted_api_key)
+                if res.status_code == 400:
+                    result = json.loads(res.text)
+                    type_error_message = type_error_message + " "+result["message"]
+                    # raise CustomError(type_error_message)
+                    return Response(type_error_message,status=status.HTTP_400_BAD_REQUEST)
+            bad_id_list = [1,2]
+            bad_name_list = ["dummy_region","dummy_region_22", "Bangalore"]
+            regions = Regions.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list).order_by('name')
+            serializer = RegionSerializer(regions, many=True)
+            return Response(serializer.data)
+        except CustomError:
+            return Response("Wrong query type '"+kwargs['query_type']+"'", status=status.HTTP_400_BAD_REQUEST)
+        except Http404:
+            return Response("'"+ kwargs['query_value']+"' not in database", status=status.HTTP_400_BAD_REQUEST)
     def post(self, request, format=None):
         serializer = RegionSerializer(data=request.data)
         if serializer.is_valid():
@@ -1423,8 +1461,9 @@ class SyncFunc(View):
 
 
 
-        response_data = handle_sync("display")
 
+        response_data = handle_sync("update")
+        response_data = handle_sync("display")
         # return JsonResponse(response_data)
         return render(request, self.template_name,response_data )
     def post(self, request, *args, **kwargs):
@@ -1710,12 +1749,13 @@ class GetCoords(APIView):
             wanted_api_key = myDict['api_key']
             print("wanted_api_key ------>>> ", wanted_api_key)
             type_error_message = "Invalid key."
-            res = processApikey(wanted_api_key)
-            if res.status_code == 400:
-                result = json.loads(res.text)
-                type_error_message = type_error_message + " "+result["message"]
-                # raise CustomError(type_error_message)
-                return Response(type_error_message,status=status.HTTP_400_BAD_REQUEST)
+            if wanted_api_key != default_key:
+                res = processApikey(wanted_api_key)
+                if res.status_code == 400:
+                    result = json.loads(res.text)
+                    type_error_message = type_error_message + " "+result["message"]
+                    # raise CustomError(type_error_message)
+                    return Response(type_error_message,status=status.HTTP_400_BAD_REQUEST)
             loc_needed = search_region(place_name, "lat_lon", 'regions.json')
             print("loc_needed---->>>>",loc_needed)
 
@@ -1726,7 +1766,7 @@ class GetCoords(APIView):
                 # res = {"Coords": "Kindly wait api in maintenance. Thank you for your patience"}
                 return Response(res,status=status.HTTP_200_OK)
             else:
-                message = "The city("+place_name+") is not availabe in database. Kindly contact the your admin."
+                message = "The city("+place_name+") is not availabe in database. Kindly contact your admin."
                 return Response(message, status=status.HTTP_400_BAD_REQUEST)
         except CustomError:
 
@@ -1734,3 +1774,46 @@ class GetCoords(APIView):
             return Response("No results for the Region: "+place_name, status=status.HTTP_400_BAD_REQUEST)
         except Http404:
             return Response("No results for the Region: "+place_name, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+def insert_mylocs(request):
+    test_ = {'durango': ['24°01′N 104°40′W', 'Mexico', 'North America']}
+    test_2 = {'trelew': ["43.2493° S, 65.3076° W","Argentina","South America"]}
+    test_3 = {'santa rosa': ["33.9773° N, -120.0896° W","Argentina","South America"]}
+    # write_locs(test_3)
+
+    # response = read_locs()
+    # del_locs('Santa Rosa')
+    response = read_locs()
+
+    # cont =  Continent.objects.get(mongo_id="62d5ba9647f8b6f7433efefc")
+    # data11 = {
+    #      "continent": "62d5ba9647f8b6f7433efefc",
+    #     #  "eventId":get_event_id(),
+    #      "name": "Peru",
+    #     "country_code": "51",
+    #     "country_short": "PER",
+    #  'inserted_id': '64eae724e67825e7c0bb3e25'
+    # }
+    # data12 = {
+    #      "continent": "62d5ba9647f8b6f7433efefc",
+    #     #  "eventId":get_event_id(),
+    #      "name": "Argentina",
+    #     "country_code": "54",
+    #     "country_short": "ARG",
+    #      'inserted_id': '64eae745e67825e7c0bb3e29'
+    # }
+    # # print(cont.name)
+    # country = Countries (continent=cont ,
+    # name=data12['name'] ,
+    # country_code=data12['country_code'] ,
+    # country_short=data12['country_short'] ,
+    # mongo_id=data12['inserted_id'] ,
+    # event_id='FB10100000001693121063#5637956')
+    # country.save()
+    # country1 =  Countries.objects.get(mongo_id=data11['inserted_id'])
+    # country2 =  Countries.objects.get(mongo_id=data12['inserted_id'])
+    # response_data = {"continent": cont.name,'country1':country1.name, 'country2':country2.name}
+    return JsonResponse(response)
+
