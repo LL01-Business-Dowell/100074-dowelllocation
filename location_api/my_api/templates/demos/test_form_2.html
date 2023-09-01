@@ -19,7 +19,7 @@
     var $j = jQuery.noConflict(true);
 </script>
 <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAsH8omDk8y0lSGLTW9YtZiiQ2MkmsF-uQ&libraries=places"></script>
+    src="https://maps.googleapis.com/maps/api/js?key=api_key&libraries=places"></script>
 <!--<script type="javascript"  src="{% static 'js/map.js' %}"></script>-->
 <section class="divider">
     <div class="container">
@@ -38,7 +38,7 @@
 
         <div class="row">
             <!--<input type="text" id="locationInput" placeholder="Enter a location">-->
-            
+
             <div id="loc_div" class="col-md-6">
                 <form id="loc_form" method="post">
                     {% csrf_token %}
@@ -172,12 +172,12 @@
             geocoder = new google.maps.Geocoder();
             $('#text_locs_btn').click(function(e){
                  e.preventDefault(e);
-            
+
 	        let lat_val = $('#lat_value_id').val()
 	        let lon_val = $('#lon_value_id').val()
 	        let wanted_mess = lat_val.concat(" ", lon_val);
 	       // let input = "Nairobi";
-	        
+
 	        console.log("wanted_mess ===> "+wanted_mess)
 	        var input = document.getElementById('locationInput');
 	        input.setAttribute('value', 'Nairobi');
@@ -200,11 +200,11 @@
 
                 // Display the location on the map
                 // displayLocationOnMap(place.geometry.location);
-                
+
             });
 });
-            
-            
+
+
         }
 
         function displayLocationOnMap(location) {
@@ -221,7 +221,7 @@
             console.log("lat_num ===> "+lat_num)
             console.log("lon_num ===> "+lon_num)
             var newLatlng = new google.maps.LatLng(lat_num,lon_num);
-            
+
             // map = new google.maps.Map(document.getElementById('map'), {
             //     center: { lat: Number(lat_num), lng: Number(lon_num) },
             //     zoom: 4
@@ -234,9 +234,9 @@
     position: { lat: Number(lat_num), lng:Number(lon_num)},
     map: map,
   });
-  
-  
-  
+
+
+
   const infowindow = new google.maps.InfoWindow({
     content: "<p>Marker Location:" + marker.getPosition() + "</p>",
   });
@@ -244,9 +244,9 @@
   google.maps.event.addListener(marker, "click", () => {
     infowindow.open(map, marker);
   });
-  
-  
-  
+
+
+
         }
         initMap();
     });
