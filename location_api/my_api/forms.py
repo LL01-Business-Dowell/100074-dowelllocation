@@ -1,7 +1,7 @@
 from django import forms
 from .models import Continent, Countries,Regions, SubRegions
 bad_continents = ["default continent", "dummy_continent"]
-bad_country_id_list = [14,8,9,11,13,10,63, 64,16, 15, 46, 78]
+bad_country_id_list = [14,8,9,11,13,10, 64,16, 15, 46, 78]
 bad_country_name_list = ["China_Error",
 "dummy_country","dummy_country2","Indonesia_Error",
 "Indonesia_Error","Myanmar_Error","Singapore_Error",

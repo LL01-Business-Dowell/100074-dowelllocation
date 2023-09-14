@@ -101,7 +101,7 @@
                             <div class="form-group">
                                 <label>Latitude Value <small>*</small></label>
                                 <input name="lat_value" id="lat_value_id" class="form-control required"
-                                    placeholder="eg. 51.003848" type="text">
+                                    placeholder="eg. 51.003848" type="text" value = "{{ context.lat_value}}">
                             </div>
                         </div>
                         <div class="col-sm-4">
@@ -123,7 +123,7 @@
                             <div class="form-group">
                                 <label>Longitude Value <small>*</small></label>
                                 <input name="lon_value" id="lon_value_id" class="form-control required"
-                                    placeholder="eg. -51.003848" type="text">
+                                    placeholder="eg. -51.003848" type="text" value="{{ context.lon_value }}">
                             </div>
                         </div>
                         <div class="col-sm-4">
@@ -181,6 +181,14 @@
     $(document).ready(function () {
         var map;
         var geocoder;
+        var lat_dir = "{{ context.lat_direction|safe }}";
+        var lon_dir = "{{ context.lon_direction|safe }}";
+        document.getElementById("lat_direction_id").value =  lat_dir;
+        // ('#lat_direction_id').val(lat_dir);
+        document.getElementById("lon_direction_id").value = lon_dir;
+        // ('#lon_direction_id').val(lon_dir);
+        console.log("lat_dir", lat_dir)
+        console.log("lon_dir", lon_dir)
 
         // Initialize the map
         function initMap() {
@@ -192,7 +200,17 @@
             geocoder = new google.maps.Geocoder();
             $('#text_locs_btn').click(function(e){
                  e.preventDefault(e);
+            $('#region_btn').click(function (){
+            lat_val = validateLatitude()
+            lon_val = validateLongitude()
+            if (!lat_val || !lon_val){
+            $("#message_text").text(message_text);
+                $("#loc_alert").css({'display':'block'});
+                // setTimeout(function(){  $("#loc_alert").css({'display':'none'}) }, 200);
 
+            }
+                // validateUsername()
+            })
 	        let lat_val = $('#lat_value_id').val()
 	        let lon_val = $('#lon_value_id').val()
 	        let wanted_mess = lat_val.concat(" ", lon_val);
@@ -269,6 +287,73 @@
 
         }
         initMap();
+    let temp_alert = '<div style= "display: none;" id="loc_alert" class="alert alert-danger alert-dismissible" role="alert">\
+ <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
+<p id="message_text"> <strong>Error!</strong> </p>\
+</div>'
+    function validateLatitude() {
+       // Get the value from the selected option in a dropdown
+        lat_value_val= $( "#lat_value_id" ).val();
+        lat_direction_val = $( "#lat_direction_id" ).val();
+
+        if (lat_direction_val == "N"){
+            if (lat_value_val.charAt(0) == "-"){
+                $("#alert_p").append(temp_alert);
+                message_text = "North does not take a negative value"
+                return false
+            } else{
+                return true
+            }
+        }
+        if (lat_direction_val == "S"){
+            if (lat_value_val.charAt(0) == "-"){
+                return true
+            } else{
+                $("#alert_p").append(temp_alert);
+                message_text = "South does takes a negative value"
+                return false
+            }
+        }
+
+
+        // alert("lat_value"+lat_value_val.charAt(0)+"lat_direction_val"+lat_direction_val);
+    }
+    function validateLongitude() {
+        lon_value= $( "#lon_value_id" ).val();
+        lon_direction = $( "#lon_direction_id" ).val();
+
+        // alert("lon_value"+lon_value+"lon_direction"+lon_direction);
+        if (lon_direction == "E"){
+            if (lon_value.charAt(0) == "-"){
+                $("#alert_p").append(temp_alert);
+                message_text = "East does not take a negative value"
+                return false
+            } else{
+                return true
+            }
+        }
+        if (lon_direction == "W"){
+            if (lon_value.charAt(0) == "-"){
+                return true
+            } else{
+                $("#alert_p").append(temp_alert);
+                message_text = "West does takes a negative value"
+                return false
+            }
+        }
+
+    }
+    $('#region_btn').click(function (){
+            lat_val = validateLatitude()
+            lon_val = validateLongitude()
+            if (!lat_val || !lon_val){
+            $("#message_text").text(message_text);
+                $("#loc_alert").css({'display':'block'});
+                // setTimeout(function(){  $("#loc_alert").css({'display':'none'}) }, 200);
+
+            }
+                // validateUsername()
+            })
     });
 
 
