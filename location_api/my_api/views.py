@@ -2,7 +2,7 @@
 # from msilib.schema import Error
 from time import monotonic, time
 from django.shortcuts import render, redirect
-from my_api.models import Countries, Regions, SubRegions, Continent, RequestsRec, TimeZoneDb
+from my_api.models import Countries, Regions, SubRegions, Continent, RequestsRec, TimeZoneDb, Countries2, Regions2
 from my_api.serializers import CountrySerializer, RegionSerializer, SubRegionSerializer, ContinentSerializer
 from django.http import Http404, JsonResponse
 from rest_framework.views import APIView
@@ -337,6 +337,23 @@ def search_region(key, value, json_file, all_values = False):
                 return res
             print("It is no where to be seen")
             return False
+def search_region_2(key):
+    key = key.lower()
+    print("Key--->>",key)
+    if Regions2.objects.filter(name=key).exists():
+        reg = Regions2.objects.get(name= key)
+        country = reg.country.name
+        continent = reg.country.continent.name
+        res= {      'lat':reg.lat,
+                    'lon':reg.lon,
+                    'location':reg.lat_lon,
+                    'country':country,
+                    'continent':continent,
+                    }
+        return res
+    else:
+        print("Was not found in database")
+        return False
 # class CreateLocs
 def loc_creator(request):
     # key_namer = "continent"
@@ -459,7 +476,7 @@ class CountryList(APIView):
         status_dict['project-code'] = kwargs['projectCode']
 
         try:
-            bad_id_list = [14,8,9,11,13,10,63, 64,16, 15, 46, 78]
+            bad_id_list = [14,8,9,11,13,10, 64,16, 15, 46, 78]
             bad_name_list = ["China_Error","dummy_country","dummy_country2","Indonesia_Error","Indonesia_Error","Myanmar_Error","Singapore_Error"]
 
             countries = Countries.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list)
@@ -987,7 +1004,11 @@ def local_continents(request):
     return render (request, 'demos/local_continents.html',context)
 def local_countries(request, pk):
     if pk == 0:
-        countries =  Countries.objects.all()
+        bad_id_list = [14,8,9,11,13,10, 64,16, 15, 46, 78]
+        bad_name_list = ["China_Error","dummy_country","dummy_country2","Indonesia_Error","Indonesia_Error","Myanmar_Error","Singapore_Error"]
+
+        countries =  Countries.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list)
+        # countries =  Countries2.objects.all()
         context = {"records":countries, "name":"All"}
         return render (request, 'demos/local_countries.html',context)
     else :
@@ -1003,7 +1024,10 @@ def local_countries(request, pk):
 def local_regions(request, pk):
     if pk == 0:
         # countries =  Countries.objects.all()
-        regions =  Regions.objects.all()
+        bad_id_list = [1,2]
+        bad_name_list = ["dummy_region","dummy_region_22", "Bangalore"]
+        regions = Regions.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list).order_by('name')
+        # regions =  Regions.objects.all()
         context = {"records":regions, "name":"All"}
         return render (request, 'demos/local_regions.html',context)
     else :
@@ -1775,7 +1799,55 @@ class GetCoords(APIView):
         except Http404:
             return Response("No results for the Region: "+place_name, status=status.HTTP_400_BAD_REQUEST)
 
+class GetCoords2(APIView):
+    """
+    List all countries, or create a new country.
+    """
+    def get(self, request, format=None):
+        return JsonResponse({"status":"Kindly use POST request"})
+    def post(self, request):
+        place_name = request.data.get('region')
+        myDict = request.data
 
+
+
+        # url= 'https://maps.googleapis.com/maps/api/geocode/json?address='+place_name+'&key=APIKEY'
+
+
+
+        try:
+            # r=requests.get(url)
+            # results = json.loads(r.text)
+            # location_needed = results['results'][0]['geometry']['location']
+            # res = {"Coords": location_needed}
+            wanted_api_key = myDict['api_key']
+            print("wanted_api_key ------>>> ", wanted_api_key)
+            type_error_message = "Invalid key."
+            if wanted_api_key != default_key:
+                res = processApikey(wanted_api_key)
+                if res.status_code == 400:
+                    result = json.loads(res.text)
+                    type_error_message = type_error_message + " "+result["message"]
+                    # raise CustomError(type_error_message)
+                    return Response(type_error_message,status=status.HTTP_400_BAD_REQUEST)
+            loc_needed = search_region_2(place_name)
+            print("loc_needed---->>>>",loc_needed)
+
+
+            if loc_needed:
+                # loc_needed['location'] = give_refined_coords(loc_needed['location'])
+                res = {"data": loc_needed}
+                # res = {"Coords": "Kindly wait api in maintenance. Thank you for your patience"}
+                return Response(res,status=status.HTTP_200_OK)
+            else:
+                message = "The city("+place_name+") is not availabe in database. Kindly contact your admin."
+                return Response(message, status=status.HTTP_400_BAD_REQUEST)
+        except CustomError:
+
+
+            return Response("No results for the Region: "+place_name, status=status.HTTP_400_BAD_REQUEST)
+        except Http404:
+            return Response("No results for the Region: "+place_name, status=status.HTTP_400_BAD_REQUEST)
 
 def insert_mylocs(request):
     test_ = {'durango': ['24°01′N 104°40′W', 'Mexico', 'North America']}

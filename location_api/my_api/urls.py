@@ -8,7 +8,7 @@ urlpatterns = [
 
         path('api/',views.api, name='api'),
     path('get-coords/', views.GetCoords.as_view()),
-
+path('get-coords-v2/', views.GetCoords2.as_view()),
     path('continents/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.ContinentList.as_view()),
     path('countries/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.CountryList.as_view()),
     path('regions/<slug:username>/<slug:sessionId>/<slug:projectCode>/', views.RegionList.as_view()),
@@ -32,6 +32,7 @@ urlpatterns = [
     path('create-continent/', loc_recs_view.create_continent, name='create_continent'),
     path('create-country/', loc_recs_view.create_country, name='create_country'),
     path('create-region/', loc_recs_view.create_region, name='create_region'),
+    path('update/<int:pk>', loc_recs_view.update_region, name='update-region'),
     path('create-sub-region/', loc_recs_view.create_sub_region, name='create_sub_region'),
     path('my-form-test/', loc_recs_view.my_form_test, name='my-form-test'),
     path('display-req-resp/', views.DisplayReqResp.as_view(), name='display-req-resp'),

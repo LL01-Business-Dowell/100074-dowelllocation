@@ -76,3 +76,37 @@ class TimeZoneDb(models.Model):
 
     def __str__(self):
         return self.city_attained+ self.utc_attained
+# class MainDb(models.Model):
+#     coordinates =  models.TextField(default  ="Default")
+#     cou_name_en = models.TextField(default= "Default")
+#     lat = models.TextField(default = "Default")
+#     lon = models.TextField(default="Default")
+#     name = models.TextField(default="Default")
+#     country_code = models.CharField(max_length = 500, default="None")
+#     mongo_id = models.CharField(max_length=300, default="REQMONGOID")
+#     event_id = models.CharField(max_length=300, default="REQEVENTID")
+#     timezone = models.CharField(max_length=300, default='Africa/Abidjan')
+#     def __str__(self):
+#         return str(self.name)
+class Countries2(models.Model):
+    continent = models.ForeignKey(Continent, on_delete=models.CASCADE, default=Continent.get_default_pk)
+    name = models.CharField(max_length=300)
+    country_code = models.CharField(max_length=5,default="000")
+    country_short = models.CharField(max_length=6, default="IIII")
+    mongo_id = models.CharField(max_length=300, default="COUNTRYMONGOID")
+    event_id = models.CharField(max_length=300, default="EVENTMONGOID")
+    def __str__(self):
+        return self.name
+class Regions2(models.Model):
+    country = models.ForeignKey(Countries2, on_delete=models.CASCADE)
+    name =  models.CharField(max_length=300)
+    lat_lon = models.CharField(max_length=600,  default="DefaultLatLon")
+    lat = models.CharField(max_length=600,  default="DefaultLat")
+    lon = models.CharField(max_length=600,  default="DefaultLon")
+    city_code = models.CharField(max_length=25, default="CITY")
+    city_area = models.CharField(max_length=25, default="000")
+    mongo_id = models.CharField(max_length=300, default="REGIONMONGOID")
+    event_id = models.CharField(max_length=300, default="EVENTMONGOID")
+    def __str__(self):
+        return str(self.name)
+
