@@ -464,19 +464,24 @@ class CountryList(APIView):
         req_dict = {}
         req_dict["request"]="country-list-request"
         payload = {}
-        payload["username"]=kwargs['username']
+        if 'username' in kwargs:
+            payload["username"]=kwargs['username']
         payload["sessionId"]=kwargs['sessionId']
         payload["projectCode"]=kwargs['projectCode']
         req_dict["payload"]=str(payload)
         status_dict['req'] = str(req_dict)
 ##################
         status_dict['url'] = "countries/username/sessionId/projectCode/"
-        status_dict['username'] = kwargs['username']
+        if 'username' in kwargs:
+            status_dict['username'] = kwargs['username']
+            status_dict['url'] = "countries/username/sessionId/projectCode/"
+        else:
+            status_dict['url'] = "countries/sessionId/projectCode/"
         status_dict['session_id'] = kwargs['sessionId']
         status_dict['project-code'] = kwargs['projectCode']
 
         try:
-            bad_id_list = [14,8,9,11,13,10, 64,16, 15, 46, 78]
+            bad_id_list = [14,8,9,11,13,10, 64,16, 15, 46, 78,79,75,76,77]
             bad_name_list = ["China_Error","dummy_country","dummy_country2","Indonesia_Error","Indonesia_Error","Myanmar_Error","Singapore_Error"]
 
             countries = Countries.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list)
@@ -769,7 +774,8 @@ class RegionDetail(APIView):
         req_dict = {}
         req_dict["request"]="region-list-request"
         payload = {}
-        payload["username"]=kwargs['username']
+        if 'username' in kwargs:
+            payload["username"]=kwargs['username']
         payload["sessionId"]=kwargs['sessionId']
         payload["projectCode"]=kwargs['projectCode']
         req_dict["payload"]=str(payload)
@@ -784,8 +790,12 @@ class RegionDetail(APIView):
 
 
 
-        status_dict['url'] = "region/query_type/query_value/username/sessionId/projectCode/"
-        status_dict['username'] = kwargs['username']
+
+        if 'username' in kwargs:
+            status_dict['username'] = kwargs['username']
+            status_dict['url'] = "region/query_type/query_value/username/sessionId/projectCode/"
+        else:
+            status_dict['url'] = "region/query_type/query_value/sessionId/projectCode/"
         status_dict['session_id'] = kwargs['sessionId']
         status_dict['project-code'] = kwargs['projectCode']
         try:

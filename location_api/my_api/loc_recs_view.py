@@ -148,6 +148,8 @@ def create_region(request):
 def get_loc_(lat_lon):
     culprit = lat_lon.strip()
     offset = culprit.find("N")
+    if len(culprit) == 0:
+        return 0, 'N', 0, 'E'
     if offset != -1:
         lat_val = culprit[:offset].strip()
         lat_dir = "N"
