@@ -96,7 +96,10 @@ def give_refined_coords(raw):
     # print("lattitude : ", latt )
     # print("longitude : ", longg)
     # print("---------------------------------------")
-
+    if latt[-1] == "S":
+        latt = "-"+latt
+    if longg[-1] == "W":
+        longg = "-"+longg
     return {"lat":latt,"lng":longg}
 
 def get_event_id(trigger="default"):
@@ -1098,12 +1101,12 @@ def date_balancer(db_time):
     print(abdinjan_adjusted_time_conv)
     return abdinjan_adjusted_time_conv
 def record_re(kwargs):
-    print("rerererrererererererererererererererererererererereerererererererererererererererererererereererer")
-    print(kwargs)
-    print("rerererrererererererererererererererererererererereerererererererererererererererererererereererer")
+    # print("rerererrererererererererererererererererererererereerererererererererererererererererererereererer")
+    # print(kwargs)
+    # print("rerererrererererererererererererererererererererereerererererererererererererererererererereererer")
     abdijan_date = datetime.now(pytz.timezone('Africa/Abidjan'))
     abdijan_time_string = date_time_cleaner(False, str(abdijan_date))
-    event_id =  get_event_id()
+    event_id =  "dd"
     # event_id =  "testId"
     payload = {
         "eventId":event_id,
@@ -1119,17 +1122,19 @@ def record_re(kwargs):
     "time_z":'Africa/Abidjan'
         }
 
-    result = mongo_create("req_resp_messages",payload )
+    # result = mongo_create("req_resp_messages",payload )
+    result["isSuccess"] =  True
     if result["isSuccess"]:
-        print("Request:  --> insert Id: "+str(result["inserted_id"]))
-        rec = RequestsRec(req=kwargs['req'],url_req=kwargs['url'],response=kwargs['response'],
-        username=kwargs['username'],session_id=kwargs['session_id'],date_time_rec=abdijan_time_string,
-        mongo_id=result["inserted_id"],event_id=event_id, project_code=kwargs['project-code'],
-        is_success=kwargs["isSuccess"],is_error=kwargs["isError"],
-        )
-        rec.save()
+        # print("Request:  --> insert Id: "+str(result["inserted_id"]))
+        # rec = RequestsRec(req=kwargs['req'],url_req=kwargs['url'],response=kwargs['response'],
+        # username=kwargs['username'],session_id=kwargs['session_id'],date_time_rec=abdijan_time_string,
+        # mongo_id=result["inserted_id"],event_id=event_id, project_code=kwargs['project-code'],
+        # is_success=kwargs["isSuccess"],is_error=kwargs["isError"],
+        # )
+        # rec.save()
         return True
     else:
+        result["error"] = "Dummy Error"
         print("Request has an error : "+str(result["error"]))
         return False
     print("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")

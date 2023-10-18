@@ -128,6 +128,16 @@ USE_TZ = True
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+# CORS WHITELIST
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:8100",
+    "http://127.0.0.1:8080",
+    "https://datacube.uxlivinglab.online"
+]
+CORS_ORIGIN_REGEX_WHITELIST = [
+    r"^https://\w+\.project\.app$",
+]
+CORS_ALLOW_HEADERS = ['*']
 LANGUAGE_CODE = 'en-us'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

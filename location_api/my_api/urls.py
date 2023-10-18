@@ -38,6 +38,7 @@ path('get-coords-v2/', views.GetCoords2.as_view()),
     path('update/<int:pk>', loc_recs_view.update_region, name='update-region'),
     path('create-sub-region/', loc_recs_view.create_sub_region, name='create_sub_region'),
     path('my-form-test/', loc_recs_view.my_form_test, name='my-form-test'),
+    path('get-countries-v3/', locs_rec_view_2.GetCountries3.as_view(), name='get-countries-v3'),
     path('get-coords-v3/', locs_rec_view_2.GetCoords3.as_view(), name='get-coords-v3'),
     path('display-req-resp/', views.DisplayReqResp.as_view(), name='display-req-resp'),
 
