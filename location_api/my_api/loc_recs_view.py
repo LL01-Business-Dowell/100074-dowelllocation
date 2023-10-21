@@ -144,68 +144,7 @@ def create_region(request):
     else:
         form = RegionsForm()
 
-    return render(request, 'demos/test_form_2.html', {'form': form, "regionForm":True})
-def get_loc_(lat_lon):
-    culprit = lat_lon.strip()
-    offset = culprit.find("N")
-    if offset != -1:
-        lat_val = culprit[:offset].strip()
-        lat_dir = "N"
-    else:
-        offset = culprit.find("S")
-        if offset != -1:
-            lat_val = culprit[:offset].strip()
-            lat_dir = "S"
-        else:
-            offset = culprit.find(" ")
-            lat_val = culprit[:offset].strip()
-            if lat_val[0] == "-":
-                lat_dir = "S"
-            else:
-                lat_dir = "N"
-
-    culprit = culprit[offset+1:]
-    culprit = culprit.strip()
-    offset = culprit.find("E")
-    if offset != -1:
-        lon_val = culprit[:offset].strip()
-        lon_dir = "E"
-    else:
-        offset = culprit.find("W")
-        if offset != -1:
-            lon_val = culprit[:offset].strip()
-            lon_dir = "W"
-        else:
-            # offset = culprit.find(" ")
-            lon_val = culprit
-            if lon_val[0] == "-":
-                lon_dir = "W"
-            else:
-                lon_dir = "E"
-
-    return lat_val, lat_dir, lon_val, lon_dir
-
-
-def update_region(request , pk):
-    instance = get_object_or_404(Regions, pk=pk)
-    form = RegionsForm( instance=instance)
-    if request.method == 'GET':
-        lat_lon =  instance.lat_lon
-        print("lat_lon --> ", lat_lon)
-        print("results ====>>>>", get_loc_(lat_lon))
-        lat_value,lat_direction,lon_value,lon_direction,=get_loc_(lat_lon)
-        context =     {
-        "pk" :  instance.pk,
-        "name" :  instance.name,
-        "city_code" :  instance.city_code,
-        "city_area" :  instance.city_area,
-        "lat_value" :  lat_value,
-        "lat_direction" :  lat_direction,
-        "lon_value" :  lon_value,
-        "lon_direction" :  lon_direction,
-        "country" :  instance.country,
-        }
-        return render(request, 'demos/update_region.html', {'form': form, "context":context, "regionForm":True})
+    return render(request, 'demos/form_template.html', {'form': form, "regionForm":True})
 
 
     if request.method == 'POST':

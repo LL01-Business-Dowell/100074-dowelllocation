@@ -96,7 +96,10 @@ def give_refined_coords(raw):
     # print("lattitude : ", latt )
     # print("longitude : ", longg)
     # print("---------------------------------------")
-
+    if latt[-1] == "S":
+        latt = "-"+latt
+    if longg[-1] == "W":
+        longg = "-"+longg
     return {"lat":latt,"lng":longg}
 
 def get_event_id(trigger="default"):
@@ -464,19 +467,24 @@ class CountryList(APIView):
         req_dict = {}
         req_dict["request"]="country-list-request"
         payload = {}
-        payload["username"]=kwargs['username']
+        if 'username' in kwargs:
+            payload["username"]=kwargs['username']
         payload["sessionId"]=kwargs['sessionId']
         payload["projectCode"]=kwargs['projectCode']
         req_dict["payload"]=str(payload)
         status_dict['req'] = str(req_dict)
 ##################
         status_dict['url'] = "countries/username/sessionId/projectCode/"
-        status_dict['username'] = kwargs['username']
+        if 'username' in kwargs:
+            status_dict['username'] = kwargs['username']
+            status_dict['url'] = "countries/username/sessionId/projectCode/"
+        else:
+            status_dict['url'] = "countries/sessionId/projectCode/"
         status_dict['session_id'] = kwargs['sessionId']
         status_dict['project-code'] = kwargs['projectCode']
 
         try:
-            bad_id_list = [14,8,9,11,13,10, 64,16, 15, 46, 78]
+            bad_id_list = [14,8,9,11,13,10,63, 64,16, 15, 46, 78]
             bad_name_list = ["China_Error","dummy_country","dummy_country2","Indonesia_Error","Indonesia_Error","Myanmar_Error","Singapore_Error"]
 
             countries = Countries.objects.all().exclude(id__in=bad_id_list).exclude(name__in=bad_name_list)
@@ -769,7 +777,8 @@ class RegionDetail(APIView):
         req_dict = {}
         req_dict["request"]="region-list-request"
         payload = {}
-        payload["username"]=kwargs['username']
+        if 'username' in kwargs:
+            payload["username"]=kwargs['username']
         payload["sessionId"]=kwargs['sessionId']
         payload["projectCode"]=kwargs['projectCode']
         req_dict["payload"]=str(payload)
@@ -784,8 +793,12 @@ class RegionDetail(APIView):
 
 
 
-        status_dict['url'] = "region/query_type/query_value/username/sessionId/projectCode/"
-        status_dict['username'] = kwargs['username']
+
+        if 'username' in kwargs:
+            status_dict['username'] = kwargs['username']
+            status_dict['url'] = "region/query_type/query_value/username/sessionId/projectCode/"
+        else:
+            status_dict['url'] = "region/query_type/query_value/sessionId/projectCode/"
         status_dict['session_id'] = kwargs['sessionId']
         status_dict['project-code'] = kwargs['projectCode']
         try:
@@ -1088,12 +1101,12 @@ def date_balancer(db_time):
     print(abdinjan_adjusted_time_conv)
     return abdinjan_adjusted_time_conv
 def record_re(kwargs):
-    print("rerererrererererererererererererererererererererereerererererererererererererererererererereererer")
-    print(kwargs)
-    print("rerererrererererererererererererererererererererereerererererererererererererererererererereererer")
+    # print("rerererrererererererererererererererererererererereerererererererererererererererererererereererer")
+    # print(kwargs)
+    # print("rerererrererererererererererererererererererererereerererererererererererererererererererereererer")
     abdijan_date = datetime.now(pytz.timezone('Africa/Abidjan'))
     abdijan_time_string = date_time_cleaner(False, str(abdijan_date))
-    event_id =  get_event_id()
+    event_id =  "dd"
     # event_id =  "testId"
     payload = {
         "eventId":event_id,
@@ -1109,17 +1122,19 @@ def record_re(kwargs):
     "time_z":'Africa/Abidjan'
         }
 
-    result = mongo_create("req_resp_messages",payload )
+    # result = mongo_create("req_resp_messages",payload )
+    result["isSuccess"] =  True
     if result["isSuccess"]:
-        print("Request:  --> insert Id: "+str(result["inserted_id"]))
-        rec = RequestsRec(req=kwargs['req'],url_req=kwargs['url'],response=kwargs['response'],
-        username=kwargs['username'],session_id=kwargs['session_id'],date_time_rec=abdijan_time_string,
-        mongo_id=result["inserted_id"],event_id=event_id, project_code=kwargs['project-code'],
-        is_success=kwargs["isSuccess"],is_error=kwargs["isError"],
-        )
-        rec.save()
+        # print("Request:  --> insert Id: "+str(result["inserted_id"]))
+        # rec = RequestsRec(req=kwargs['req'],url_req=kwargs['url'],response=kwargs['response'],
+        # username=kwargs['username'],session_id=kwargs['session_id'],date_time_rec=abdijan_time_string,
+        # mongo_id=result["inserted_id"],event_id=event_id, project_code=kwargs['project-code'],
+        # is_success=kwargs["isSuccess"],is_error=kwargs["isError"],
+        # )
+        # rec.save()
         return True
     else:
+        result["error"] = "Dummy Error"
         print("Request has an error : "+str(result["error"]))
         return False
     print("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
