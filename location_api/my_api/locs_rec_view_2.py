@@ -57,6 +57,89 @@ def get_data(data, wanted = "regions"):
         return {"success":False, "status_code":{r.status_code}, "message": error_dict['message']}
         # return Response(f"Request failed with status code {r.status_code}", status=status.HTTP_400_BAD_REQUEST)
 
+
+
+def data_operation(data):
+    url = "https://datacube.uxlivinglab.online/db_api/crud/"
+    wanted_dets = list()
+    content_length = len(json.dumps(data))
+
+    
+    headers = {"Content-Type": "application/json", "Content-Length": str(len(data))}
+    r=requests.get(url,data=data)
+    print("data ------------->",data)
+    if r.status_code == 201 or r.status_code == 200:
+        raw_data =  json.loads(r.text)['data']
+        return {"data": raw_data, "success":True}
+       
+    else:
+        print(f"Request failed with status code {r.status_code} because {r.text}")
+        error_dict = json.loads(r.text)
+        return {"success":False, "status_code":{r.status_code}, "message": error_dict['message']}
+        # return Response(f"Request failed with status code {r.status_code}", status=status.HTTP_400_BAD_REQUEST)
+ 
+ 
+ 
+def add_collection(formatted_data):
+    url = "https://datacube.uxlivinglab.online/db_api/crud/"
+    r=requests.post(url, formatted_data)
+    print("data is here ------------->", formatted_data)
+    if r.status_code == 201 or r.status_code == 200:
+        raw_data =  json.loads(r.text)['data']
+        return {"data": raw_data, "success":True}
+    
+    else:
+        print(f"Request failed with status code {r.status_code} because {r.text}")
+        error_dict = json.loads(r.text)
+        return {"success":False, "status_code":{r.status_code}, "message": error_dict['message']}
+        # return Response(f"Request failed with status code {r.status_code}", status=status.HTTP_400_BAD_REQUEST)
+ 
+ 
+ 
+ 
+def deleted_collection(formatted_data):
+    print('delete func')
+    url = "https://datacube.uxlivinglab.online/db_api/crud/"
+    r=requests.delete(url, data=formatted_data)
+    print("data is here ------------->", formatted_data)
+    print("d ------------->", r)
+    if r.status_code == 201 or r.status_code == 200:
+        raw_data =  json.loads(r.text)['data']
+        print('This ', raw_data)
+        return {"data": raw_data, "success":True}
+    
+    else:
+        print(f"Request failed with status code {r.status_code} because {r.text}")
+        error_dict = json.loads(r.text)
+        return {"success":False, "status_code":{r.status_code}, "message": error_dict['message']}
+        # return Response(f"Request failed with status code {r.status_code}", status=status.HTTP_400_BAD_REQUEST)
+ 
+    
+    
+ 
+ 
+ 
+ 
+def update_collection(formatted_data):
+    print('delete func')
+    url = "https://datacube.uxlivinglab.online/db_api/crud/"
+    r=requests.update(url, data=formatted_data)
+    print("data is here ------------->", formatted_data)
+    print("d ------------->", r)
+    if r.status_code == 201 or r.status_code == 200:
+        raw_data =  json.loads(r.text)['data']
+        print('This ', raw_data)
+        return {"data": raw_data, "success":True}
+    
+    else:
+        print(f"Request failed with status code {r.status_code} because {r.text}")
+        error_dict = json.loads(r.text)
+        return {"success":False, "status_code":{r.status_code}, "message": error_dict['message']}
+        # return Response(f"Request failed with status code {r.status_code}", status=status.HTTP_400_BAD_REQUEST)
+ 
+    
+    
+    
 class GetCoords3(APIView):
     """
     List all countries, or create a new country.
@@ -125,6 +208,8 @@ class GetCoords3(APIView):
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
         except Http404:
             return Response("No results for the Regions requested. Kindly cross check the payload and parameters or contact your admin", status=status.HTTP_400_BAD_REQUEST)
+        
+    
 class GetCountries3(APIView):
     """
     List all countries, or create a new country.
@@ -158,3 +243,161 @@ class GetCountries3(APIView):
             return Response("No results for the Countries as requested. Kindly cross check the payload and parameters or contact your admin", status=status.HTTP_400_BAD_REQUEST)
 
 
+   
+    
+
+
+
+class Collections3(APIView):
+    """
+    List all countries, or create a new country.
+    """
+    # def post(self, request, format=None):
+    #     return JsonResponse({"status":"Kindly use POST request"})
+    def post(self, request):
+        error_message = "Kindly cross check the payload and parameters. If problem persists contact your admin"
+        try:
+            
+            
+            wanted_dets = list()
+            payload = request.data
+            print('This is the payload ', payload)
+            # {
+            #         "api_key":"api_key",
+            #         "operation":"fetch",
+            #         "db_name":"dowellnps",
+            #         "coll_name":"country"
+            #     }
+            res = data_operation(payload)
+            if res['success']:
+                wanted_dets = res['data']
+            else:
+                error_message = res['message']
+                raise CustomError(res['message'])
+            # wanted_dets.extend(get_data(payload))
+            res = {"data": wanted_dets}
+                # res = {"Coords": "Kindly wait api in maintenance. Thank you for your patience"}
+            return Response(res,status=status.HTTP_200_OK)
+        except CustomError:
+            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+        except Http404:
+            return Response("No results for the Countries as requested. Kindly cross check the payload and parameters or contact your admin", status=status.HTTP_400_BAD_REQUEST)
+
+
+   
+
+   
+    
+
+
+
+class AddCollections3(APIView):
+    """
+    List all countries, or create a new country.
+    """
+    # def post(self, request, format=None):
+    #     return JsonResponse({"status":"Kindly use POST request"})
+    def post(self, request):
+        error_message = "Kindly cross check the payload and parameters. If problem persists contact your admin"
+        try:
+            
+            
+            wanted_dets = list()
+            payload = request.data
+            print('This is the payload ', payload)
+            data_to_insert = payload.get("data")
+            formatted_data = {
+                "api_key": payload.get("api_key"),  # Replace with your API key
+                "db_name": payload.get("db_name"),
+                "coll_name": payload.get("coll_name"),
+                "operation": payload.get("operation"),
+                "data": json.dumps(data_to_insert)
+            }
+            res = add_collection(formatted_data)
+            if res['success']:
+                wanted_dets = res['data']
+            else:
+                error_message = res['message']
+                raise CustomError(res['message'])
+            # wanted_dets.extend(get_data(payload))
+            res = {"data": wanted_dets}
+                # res = {"Coords": "Kindly wait api in maintenance. Thank you for your patience"}
+            return Response(res,status=status.HTTP_200_OK)
+        except CustomError:
+            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+        except Http404:
+            return Response("No results for the Countries as requested. Kindly cross check the payload and parameters or contact your admin", status=status.HTTP_400_BAD_REQUEST)
+
+
+
+    def delete(self, request):
+        print('This is the delete function!')
+        error_message = "Kindly cross check the payload and parameters. If problem persists contact your admin"
+        try:
+            
+            
+            wanted_dets = list()
+            payload = request.data
+            print('This is the payload ', payload)
+            # data_to_insert = payload.get("query")
+            query = payload.get("query")
+            formatted_data = {
+                "api_key": payload.get("api_key"),  # Replace with your API key
+                "db_name": payload.get("db_name"),
+                "coll_name": payload.get("coll_name"),
+                "operation": payload.get("operation"),
+                "query": query
+            }
+            res = deleted_collection(formatted_data)
+            if res['success']:
+                wanted_dets = res['query']
+            else:
+                error_message = res['message']
+                raise CustomError(res['message'])
+            # wanted_dets.extend(get_data(payload))
+            res = {"data": wanted_dets}
+                # res = {"Coords": "Kindly wait api in maintenance. Thank you for your patience"}
+            return Response(res,status=status.HTTP_200_OK)
+        except CustomError:
+            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+        except Http404:
+            return Response("No results for the Countries as requested. Kindly cross check the payload and parameters or contact your admin", status=status.HTTP_400_BAD_REQUEST)
+
+
+    def put(self, request):
+        print('This is the delete function!')
+        error_message = "Kindly cross check the payload and parameters. If problem persists contact your admin"
+        try:
+            
+            
+            wanted_dets = list()
+            payload = request.data
+            print('This is the payload ', payload)
+            # data_to_insert = payload.get("query")
+            query = payload.get("query")
+            formatted_data = {
+                "api_key": payload.get("api_key"),  # Replace with your API key
+                "db_name": payload.get("db_name"),
+                "coll_name": payload.get("coll_name"),
+                "operation": payload.get("operation"),
+                "query": query
+            }
+            res = update_collection(formatted_data)
+            if res['success']:
+                wanted_dets = res['query']
+            else:
+                error_message = res['message']
+                raise CustomError(res['message'])
+            # wanted_dets.extend(get_data(payload))
+            res = {"data": wanted_dets}
+                # res = {"Coords": "Kindly wait api in maintenance. Thank you for your patience"}
+            return Response(res,status=status.HTTP_200_OK)
+        except CustomError:
+            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+        except Http404:
+            return Response("No results for the Countries as requested. Kindly cross check the payload and parameters or contact your admin", status=status.HTTP_400_BAD_REQUEST)
+
+
+
+   
+ 

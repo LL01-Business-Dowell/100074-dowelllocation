@@ -25,7 +25,8 @@ import pprint
 from .foreign_data import external_locs as elt
 from .foreign_data import country_mapper, continent_mapper, write_locs, read_locs, del_locs
 from decouple import config
-default_key =  config("DEF_KEY")
+# default_key =  config("DEF_KEY")
+default_key =  '504a51bf-c483-4ac5-b2dd-4f209eabcbf8'
 # Create your views here.
 BASE_DIR = Path(__file__).resolve().parent.parent
 def processApikey(api_key):

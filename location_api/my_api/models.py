@@ -97,6 +97,7 @@ class Countries2(models.Model):
     event_id = models.CharField(max_length=300, default="EVENTMONGOID")
     def __str__(self):
         return self.name
+    
 class Regions2(models.Model):
     country = models.ForeignKey(Countries2, on_delete=models.CASCADE)
     name =  models.CharField(max_length=300)
