@@ -78,23 +78,23 @@ WSGI_APPLICATION = 'location_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 # DATABASES = {
-
-#           'default': {
-#              'ENGINE': 'django.db.backends.mysql', # mysql database python driver.
-#              'NAME': '100074$location_api_test2',    # mysql database name.
-#              'USER': '100074',   # db login user name.
-#              'PASSWORD': 'dowell@msql#db', # db login user password.
-#              'HOST': '100074.mysql.pythonanywhere-services.com', # db machine ip or domain, if left empty then the value is localhost.
-#             #  'PORT': '3306', # db server listening port number
-#          }
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
 # }
+DATABASES = {
+
+          'default': {
+             'ENGINE': 'django.db.backends.mysql', # mysql database python driver.
+             'NAME': '100074$location_api_test2',    # mysql database name.
+             'USER': '100074',   # db login user name.
+             'PASSWORD': 'dowell@msql#db', # db login user password.
+             'HOST': '100074.mysql.pythonanywhere-services.com', # db machine ip or domain, if left empty then the value is localhost.
+            #  'PORT': '3306', # db server listening port number
+         }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

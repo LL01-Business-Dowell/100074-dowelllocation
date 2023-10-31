@@ -100,7 +100,7 @@ def add_collection(formatted_data):
 def deleted_collection(formatted_data):
     print('delete func')
     url = "https://datacube.uxlivinglab.online/db_api/crud/"
-    r=requests.delete(url, data=formatted_data)
+    r=requests.delete(url, json=formatted_data)
     print("data is here ------------->", formatted_data)
     print("d ------------->", r)
     if r.status_code == 201 or r.status_code == 200:
@@ -120,23 +120,74 @@ def deleted_collection(formatted_data):
  
  
  
+# def update_collection(formatted_data):
+#     print('delete func')
+#     url = "https://datacube.uxlivinglab.online/db_api/crud/"
+#     r=requests.post(url, data=formatted_data)
+#     print("data is here ------------->", formatted_data)
+#     print("d ------------->", r)
+#     if r.status_code == 201 or r.status_code == 200:
+#         raw_data =  json.loads(r.text)['data']
+#         print('This ', raw_data)
+#         return {"data": raw_data, "success":True}
+    
+#     else:
+#         print(f"Request failed with status code {r.status_code} because {r.text}")
+#         error_dict = json.loads(r.text)
+#         return {"success":False, "status_code":{r.status_code}, "message": error_dict['message']}
+#         # return Response(f"Request failed with status code {r.status_code}", status=status.HTTP_400_BAD_REQUEST)
+
+
 def update_collection(formatted_data):
-    print('delete func')
+    print('update func')
     url = "https://datacube.uxlivinglab.online/db_api/crud/"
-    r=requests.update(url, data=formatted_data)
-    print("data is here ------------->", formatted_data)
-    print("d ------------->", r)
-    if r.status_code == 201 or r.status_code == 200:
-        raw_data =  json.loads(r.text)['data']
-        print('This ', raw_data)
-        return {"data": raw_data, "success":True}
     
+    # The data to be sent should include both query and update_data
+    data = {
+        "api_key": formatted_data.get("api_key"),
+        "db_name": formatted_data.get("db_name"),
+        "coll_name": formatted_data.get("coll_name"),
+        "operation": formatted_data.get("operation"),
+        "query": formatted_data.get("query"),
+        "update_data": formatted_data.get("update_data")
+    }
+
+    r = requests.post(url, data) 
+
+    print("data is here ------------->", formatted_data)
+    print("data is here ------------->", data)
+    print("Response ------------->", r)
+
+    if r.status_code == 201 or r.status_code == 200:
+        raw_data = json.loads(r.text)['data']
+        print('This ', raw_data)
+        return {"data": raw_data, "success": True}
     else:
         print(f"Request failed with status code {r.status_code} because {r.text}")
         error_dict = json.loads(r.text)
-        return {"success":False, "status_code":{r.status_code}, "message": error_dict['message']}
-        # return Response(f"Request failed with status code {r.status_code}", status=status.HTTP_400_BAD_REQUEST)
- 
+        return {"success": False, "status_code": r.status_code, "message": error_dict['message']}
+
+# def update_collection(formatted_data):
+#     print('update func')
+#     url = "https://datacube.uxlivinglab.online/db_api/crud/"
+    
+#     # The update data should be included in the request body as JSON
+#     data = formatted_data  # Just pass the data directly
+
+#     r = requests.post(url, data)  # Use the json parameter to send data as JSON
+
+#     print("data is here ------------->", formatted_data)
+#     print("Response ------------->", r)
+
+#     if r.status_code == 201 or r.status_code == 200:
+#         raw_data = json.loads(r.text)['data']
+#         print('This ', raw_data)
+#         return {"data": raw_data, "success": True}
+#     else:
+#         print(f"Request failed with status code {r.status_code} because {r.text}")
+#         error_dict = json.loads(r.text)
+#         return {"success": False, "status_code": r.status_code, "message": error_dict['message']}
+
     
     
     
