@@ -424,7 +424,7 @@ class ContinentList(APIView):
             status_dict["isError"]=False
             # status_dict["continents"]="Successful"
             status_dict['response'] = status.HTTP_200_OK
-            record_re(status_dict)
+            # record_re(status_dict)
 
             return Response(serializer.data)
         except CustomError:

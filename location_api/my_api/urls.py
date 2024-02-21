@@ -3,6 +3,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from my_api import views
 from my_api import loc_recs_view
 from my_api import locs_rec_view_2
+from my_api import locs_rec_view_3
+from my_api import health_check_views
 urlpatterns = [
         path('', views.api),
         path('home/', views.api, name='home'),
@@ -40,11 +42,28 @@ path('get-coords-v2/', views.GetCoords2.as_view()),
     path('my-form-test/', loc_recs_view.my_form_test, name='my-form-test'),
     path('get-countries-v3/', locs_rec_view_2.GetCountries3.as_view(), name='get-countries-v3'),
     path('get-coords-v3/', locs_rec_view_2.GetCoords3.as_view(), name='get-coords-v3'),
+    path('get-coords-v4/', locs_rec_view_2.GetCoords4.as_view(), name='get-coords-v4'),
     path('display-req-resp/', views.DisplayReqResp.as_view(), name='display-req-resp'),
 
     path('sync-function/', views.SyncFunc.as_view(), name='sync-function'),
     path('create-loc/', views.CreateFunc.as_view(), name='create-loc'),
     path('insert-mylocs/', views.insert_mylocs, name='insert-mylocs'),
+
+    ##Exile urls
+    path('get-locs/', locs_rec_view_3.GetLocations.as_view()),
+    path('create-profile/', locs_rec_view_3.CreateUserProfile.as_view()),
+    path('create-loc-group/', locs_rec_view_3.CreateLocGroup.as_view()),
+    path('create-location/', locs_rec_view_3.CreateLocation.as_view()),
+    path('update-loc-group/', locs_rec_view_3.UpdateLocGroup.as_view()),
+    path('update-location/', locs_rec_view_3.UpdateLocation.as_view()),
+    path('delete-user-locs/', locs_rec_view_3.DeleteUserProfile.as_view()),
+    path('delete-loc-group/', locs_rec_view_3.DeleteLocGroup.as_view()),
+    path('delete-loc/', locs_rec_view_3.DeleteLocation.as_view()),
+    path('sync-groups/', locs_rec_view_3.SyncGroups.as_view()),
+    ##health_check
+    path('health-check/', health_check_views.HealthCheck.as_view(), name='health-check'),
+
+
 
 
 
