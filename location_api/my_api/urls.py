@@ -43,8 +43,6 @@ path('get-coords-v2/', views.GetCoords2.as_view()),
     path('get-countries-v3/', locs_rec_view_2.GetCountries3.as_view(), name='get-countries-v3'),
     path('get-coords-v3/', locs_rec_view_2.GetCoords3.as_view(), name='get-coords-v3'),
     path('get-coords-v4/', locs_rec_view_2.GetCoords4.as_view(), name='get-coords-v4'),
-    path('get-country-list', locs_rec_view_2.GetCountryList.as_view(), name='get-country-list'),
-    path('get-city-list', locs_rec_view_2.GetCityList.as_view(), name='get-city-list'),
     path('display-req-resp/', views.DisplayReqResp.as_view(), name='display-req-resp'),
 
     path('sync-function/', views.SyncFunc.as_view(), name='sync-function'),
